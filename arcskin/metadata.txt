@@ -7,7 +7,7 @@ description=QGIS with an interface inspired by ArcGIS Pro: ribbon, panes, view t
 about=ArcSkin gives QGIS an interface inspired by ArcGIS Pro, for users who know Pro, for training rooms and for organisations moving to QGIS. It adds a ribbon (Map, Insert, Analysis, View, Edit, Share, Help, Add-ins) built from QGIS tools, a Project menu and a title row with the search box; Pro-style panes (Contents with List By views, Catalog, Geoprocessing, Symbology); view tabs that show one map view at a time with its own layers and extent; Pro's map status bar with typed coordinates (DD, DMS, DDM, MGRS, USNG, UTM, linear units); a basemap gallery; Pro's attribute table toolbar and footer; Pro's default symbology, cyan selection, label font and about 100 colour ramps; and light, flat icons for all of QGIS. English and Polish. Switching the look off restores QGIS exactly as it was. Not affiliated with or endorsed by Esri; ArcGIS is a trademark of Esri.
 version=0.3.0
 author=EnviroSolutions
-email=coo@envirosolutions.pl
+email=office@envirosolutions.pl
 
 tracker=https://github.com/envirosolutionspl/arcskin/issues
 repository=https://github.com/envirosolutionspl/arcskin
