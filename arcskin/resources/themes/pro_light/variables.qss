@@ -1,0 +1,23 @@
+/* Colours of a light, ArcGIS Pro-like theme */
+@bg-window: #f7f8f8;
+@bg-panel: #ffffff;
+@bg-header: #ebebeb;
+@border: #b5b5b5;
+@border-input: #959595;
+@border-light: #dfdfdf;
+
+@text: #4a4a4a;
+@text-emphasis: #2b2b2b;
+@text-disabled: #959595;
+
+@accent: #007ac2;
+@accent-dark: #005e95;
+@hover: #c8e3f6;
+@border-hover: #77bde7;
+@pressed: #9bccec;
+@selected: #9fd4f3;
+@selected-hover: #c7ebff;
+
+@scrollbar-bg: #ebebeb;
+@scrollbar-handle: #bfbfbf;
+@scrollbar-handle-hover: #8a8a8a;

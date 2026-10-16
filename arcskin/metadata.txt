@@ -1,0 +1,26 @@
+[general]
+name=arcskin
+qgisMinimumVersion=3.40
+qgisMaximumVersion=4.99
+supportsQt6=True
+description=QGIS with an interface inspired by ArcGIS Pro: ribbon, panes, view tabs, status bar, icons and symbology. One click to switch it on or off.
+about=ArcSkin gives QGIS an interface inspired by ArcGIS Pro, for users who know Pro, for training rooms and for organisations moving to QGIS. It adds a ribbon (Map, Insert, Analysis, View, Edit, Share, Help, Add-ins) built from QGIS tools, a Project menu and a title row with the search box; Pro-style panes (Contents with List By views, Catalog, Geoprocessing, Symbology); view tabs that show one map view at a time with its own layers and extent; Pro's map status bar with typed coordinates (DD, DMS, DDM, MGRS, USNG, UTM, linear units); a basemap gallery; Pro's attribute table toolbar and footer; Pro's default symbology, cyan selection, label font and about 100 colour ramps; and light, flat icons for all of QGIS. English and Polish. Switching the look off restores QGIS exactly as it was. Not affiliated with or endorsed by Esri; ArcGIS is a trademark of Esri.
+version=0.3.0
+author=EnviroSolutions
+email=coo@envirosolutions.pl
+
+tracker=https://github.com/envirosolutionspl/arcskin/issues
+repository=https://github.com/envirosolutionspl/arcskin
+homepage=https://github.com/envirosolutionspl/arcskin
+
+changelog=
+    0.3.0 - View tabs showing one map view at a time (with its own layers in Contents and extent), 3D views and layouts as tabs; Pro colour ramps, label font and pastel raster icons; Pro-style Symbology pane; lighter icon outlines; progress box while switching; search results drop down; fixes for QGIS 4 (layout tabs, 3D view crash, layer and Browser icons restored when switching off).
+    0.2.0 - Ribbon, Pro-style panes, map status bar (coordinates in DD/DMS/DDM, MGRS, USNG, UTM and linear units), basemap gallery, icon theme for all QGIS icons, Pro default symbology and selection color, attribute table, translations (English, Polish), QGIS 4 support.
+    0.1.0 - Plugin skeleton, light theme applied/reverted by the plugin.
+
+tags=theme,skin,ui,interface,ribbon,icons,look and feel,basemap,symbology,training
+category=Plugins
+icon=resources/icons/icon.svg
+experimental=True
+deprecated=False
+server=False

@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Build output
+build/
+dist/
+*.zip
+
+# Qt
+*.qm
+resources_rc.py
+
+# Editors and system files
+.vscode/
+.idea/
+*.swp
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# GDAL side files
+*.aux.xml
