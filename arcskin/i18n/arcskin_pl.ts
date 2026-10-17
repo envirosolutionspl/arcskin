@@ -412,8 +412,16 @@
       <translation>Warstwy</translation>
     </message>
     <message>
+      <source>Decorations</source>
+      <translation>Dekoracje</translation>
+    </message>
+    <message>
       <source>Styles</source>
       <translation>Style</translation>
+    </message>
+    <message>
+      <source>Tools</source>
+      <translation>Narzędzia</translation>
     </message>
     <message>
       <source>Data</source>
@@ -434,10 +442,6 @@
     <message>
       <source>Shapes</source>
       <translation>Kształty</translation>
-    </message>
-    <message>
-      <source>Tools</source>
-      <translation>Narzędzia</translation>
     </message>
     <message>
       <source>Modify</source>
@@ -584,8 +588,24 @@
       <translation>Historia</translation>
     </message>
     <message>
+      <source>Results</source>
+      <translation>Wyniki</translation>
+    </message>
+    <message>
+      <source>Database</source>
+      <translation>Baza danych</translation>
+    </message>
+    <message>
+      <source>Mesh</source>
+      <translation>Siatka</translation>
+    </message>
+    <message>
       <source>Reset Panes</source>
       <translation>Resetuj panele</translation>
+    </message>
+    <message>
+      <source>Panes</source>
+      <translation>Panele</translation>
     </message>
     <message>
       <source>Layer Order</source>
@@ -598,6 +618,10 @@
     <message>
       <source>Advanced Digitizing</source>
       <translation>Zaawansowana digitalizacja</translation>
+    </message>
+    <message>
+      <source>Toolbars</source>
+      <translation>Paski narzędzi</translation>
     </message>
     <message>
       <source>3D View</source>
@@ -626,6 +650,30 @@
     <message>
       <source>Redo</source>
       <translation>Ponów</translation>
+    </message>
+    <message>
+      <source>Mode</source>
+      <translation>Tryb</translation>
+    </message>
+    <message>
+      <source>Tracing</source>
+      <translation>Śledzenie</translation>
+    </message>
+    <message>
+      <source>Topology</source>
+      <translation>Topologia</translation>
+    </message>
+    <message>
+      <source>Intersections</source>
+      <translation>Przecięcia</translation>
+    </message>
+    <message>
+      <source>Self-snapping</source>
+      <translation>Do siebie</translation>
+    </message>
+    <message>
+      <source>Overlap</source>
+      <translation>Nakładanie</translation>
     </message>
     <message>
       <source>Create</source>

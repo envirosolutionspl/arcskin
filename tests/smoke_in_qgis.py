@@ -11,8 +11,71 @@ the failed checks. Takes about half a minute.
 
 import qgis.utils
 from qgis.core import QgsSettings, QgsStyle
+from qgis.PyQt import sip
 from qgis.PyQt.QtCore import QCoreApplication
-from qgis.PyQt.QtWidgets import QApplication, QTabBar, QToolBar, QWidget
+from qgis.PyQt.QtWidgets import (
+    QApplication, QTabBar, QToolBar, QToolButton, QWidget,
+)
+
+from arcskin.ribbon import ADDIN_HOSTS
+
+# QGIS toolbars and tools the ribbon does not offer (yet).
+LATER_BARS = {"mLabelToolBar", "mRasterToolBar", "mAnnotationsToolBar",
+              "mGpsToolBar", "mMeshToolBar"}
+LATER = {"mActionRotatePointSymbols", "mActionOffsetPointSymbol",
+         "mActionZoomActualSize", "mActionFeatureAction",
+         "Circular string by radius",
+         "Show Vertex Editor"}  # the ribbon has the Vertex Editor panel
+
+
+def toolbar_actions(bar):
+    """Actions of a toolbar, including the drop-down menus of its buttons
+    (but not its embedded widgets such as spin boxes)."""
+    actions = []
+    for action in bar.actions():
+        button = bar.widgetForAction(action)
+        if button is None:
+            actions.append(action)
+        elif isinstance(button, QToolButton):
+            actions += button.actions()
+            if button.menu():
+                actions += button.menu().actions()
+    return [a for a in actions if a.text() and not a.isSeparator()]
+
+
+def missing_from_ribbon(win):
+    """Names of core QGIS toolbar actions that no ribbon button or drop-down
+    reaches (the full QGIS menu of the Project button does not count)."""
+    ribbon = next(bar for bar in win.findChildren(QToolBar,
+                                                  "ArcSkinRibbonBar")
+                  if bar.isVisible())
+    qgis_menus = {sip.unwrapinstance(a) for a in win.menuBar().actions()}
+    reached, menus = set(), []
+    for button in ribbon.findChildren(QToolButton):
+        if button.defaultAction():
+            reached.add(sip.unwrapinstance(button.defaultAction()))
+        if button.menu():
+            menus.append(button.menu())
+            reached.add(sip.unwrapinstance(button.menu().menuAction()))
+    while menus:
+        actions = menus.pop().actions()
+        if any(sip.unwrapinstance(a) in qgis_menus for a in actions):
+            continue  # the QGIS Menu entry
+        for action in actions:
+            reached.add(sip.unwrapinstance(action))
+            if action.menu():
+                menus.append(action.menu())
+    missing = []
+    for bar in win.findChildren(QToolBar):
+        name = bar.objectName()
+        if (bar.parent() is not win or not name.startswith("m")
+                or name in ADDIN_HOSTS | LATER_BARS):
+            continue
+        for action in toolbar_actions(bar):
+            key = action.objectName() or action.text()
+            if sip.unwrapinstance(action) not in reached and key not in LATER:
+                missing.append(key)
+    return missing
 
 
 def smoke_test(iface):
@@ -76,6 +139,8 @@ def smoke_test(iface):
     expect(skinned(), "ArcSkin style sheet applied")
     expect(len(ramps()) >= 100, "ArcSkin colour ramps in the style")
     expect(QgsSettings().value("UI/UITheme") == "ArcSkin", "UI theme set")
+    missing = missing_from_ribbon(win)
+    expect(not missing, f"QGIS tools the ribbon lacks: {missing}")
     return failures
 
 

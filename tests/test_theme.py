@@ -20,7 +20,7 @@ def referenced_icons():
     for _, groups in ribbon.RIBBON:
         for _, items in groups:
             names.update(icon for _, _, icon, _ in items)
-    names.update(icon for _, icon in ribbon.PROJECT_MENU)
+    names.update(icon for _, icon in ribbon.PROJECT_MENU if icon)
     names.update(panes.CONTENTS_ICONS)
     names.update(panes.CATALOG_ICONS.values())
     names.update(icon for icon, _, _ in contents_views.VIEWS.values())

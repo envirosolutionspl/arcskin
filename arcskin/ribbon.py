@@ -24,14 +24,16 @@ LARGE, SMALL = 32, 16
 ADDIN_HOSTS = {"mPluginToolBar", "mWebToolBar", "mDatabaseToolBar",
                "mVectorToolBar"}
 # Tab -> groups -> items. An item is (action names, size, icon, caption):
-# extra action names form the drop-down menu of the button, "dock:<name>"
+# extra action names form the drop-down menu of the button, "menu:<name>"
+# puts that QGIS menu (or a QGIS tool button's) there instead, "dock:<name>"
 # means the show/hide action of that dock widget, "shapes:<kind>" the shape
 # digitizing tools of that kind, "gallery:basemaps" the basemap gallery and
 # "panes:reset" the Reset Panes button.
 RIBBON = [
     (tr("Map"), [
         (tr("Clipboard"), [
-            ("mActionPasteFeatures", "L", "paste", tr("Paste")),
+            ("mActionPasteFeatures menu:mMenuPasteAs", "L", "paste",
+             tr("Paste")),
             ("mActionCutFeatures", "S", "cut", tr("Cut")),
             ("mActionCopyFeatures", "S", "copy", tr("Copy")),
         ]),
@@ -43,37 +45,40 @@ RIBBON = [
             ("mActionZoomLast", "S", "prev_extent", tr("Previous")),
             ("mActionZoomNext", "S", "next_extent", tr("Next")),
             ("mActionZoomToLayers", "S", "zoom_layer", tr("To Layer")),
+            ("mActionDraw", "S", "refresh", tr("Refresh")),
             ("mActionShowBookmarks mActionNewBookmark", "L", "bookmarks",
              tr("Bookmarks")),
         ]),
         (tr("Layer"), [
             ("gallery:basemaps", "L", "basemap", tr("Basemap")),
-            ("mActionDataSourceManager mActionAddOgrLayer "
-             "mActionAddRasterLayer mActionAddDelimitedText "
-             "mActionAddWmsLayer", "L", "add_data", tr("Add Data")),
+            ("mActionDataSourceManager menu:mAddLayerMenu", "L", "add_data",
+             tr("Add Data")),
             ("mActionAddOgrLayer", "S", "add_vector", tr("Vector")),
             ("mActionAddRasterLayer", "S", "add_raster", "Raster"),
             ("mActionAddWmsLayer", "S", "add_wms", "WMS/WMTS"),
         ]),
         (tr("Selection"), [
-            ("mActionSelectFeatures mActionSelectPolygon "
-             "mActionSelectFreehand mActionSelectRadius", "L", "select",
+            ("mActionSelectFeatures menu:mMenuSelect", "L", "select",
              tr("Select")),
             ("mActionSelectByExpression mActionSelectByForm", "L",
              "select_expression", tr("By Attributes")),
-            ("mProcessingAlg_native:selectbylocation", "L",
+            ("mProcessingAlg_native:selectbylocation "
+             "mProcessingAlg_native:selectwithindistance", "L",
              "select_location", tr("By Location")),
             ("mActionDeselectAll", "S", "clear_selection", tr("Clear")),
-            ("mActionZoomToSelected", "S", "zoom_selected", tr("Zoom To")),
+            ("mActionZoomToSelected mActionPanToSelected", "S",
+             "zoom_selected", tr("Zoom To")),
             ("mActionInvertSelection", "S", "invert_selection", tr("Invert")),
-            ("mActionOpenTable", "S", "attribute_table",
+            ("mActionOpenTable menu:mMenuFilterTable", "S",
+             "attribute_table",
              tr("Attribute Table")),
             ("mActionOpenFieldCalc", "S", "field_calculator",
              tr("Calculate Field")),
         ]),
         (tr("Inquiry"), [
             ("mActionIdentify", "L", "identify", tr("Identify")),
-            ("mActionMeasure mActionMeasureArea mActionMeasureAngle", "L",
+            ("mActionMeasure mActionMeasureArea mActionMeasureAngle "
+             "mActionMeasureBearing", "L",
              "measure", tr("Measure")),
             ("mActionStatisticalSummary", "S", "statistics", tr("Statistics")),
             ("mActionMapTips", "S", "map_tips", tr("Map Tips")),
@@ -93,9 +98,11 @@ RIBBON = [
              tr("Layouts")),
         ]),
         (tr("Layers"), [
-            ("mActionNewGeoPackageLayer mActionNewVectorLayer "
-             "mActionNewMemoryLayer mActionNewVirtualLayer", "L",
+            ("mActionNewGeoPackageLayer menu:mNewLayerMenu", "L",
              "new_layer", tr("New Layer")),
+        ]),
+        (tr("Decorations"), [
+            ("menu:mMenuDecorations", "L", "decorations", tr("Decorations")),
         ]),
         (tr("Styles"), [
             ("mActionStyleManager", "L", "style_manager", tr("Styles")),
@@ -107,9 +114,18 @@ RIBBON = [
             ("modelerAction", "L", "model_builder", "ModelBuilder"),
             ("historyAction", "S", "history", tr("History")),
             ("mActionShowPythonDialog", "S", "python", "Python"),
+            ("dock:ResultsViewer", "S", "processing_results", tr("Results")),
+        ]),
+        (tr("Tools"), [
+            ("menu:mVectorMenu", "L", "vector_tools", tr("Vector")),
+            ("menu:mRasterMenu", "L", "raster_tools", "Raster"),
+            ("menu:mDatabaseMenu", "S", "database", tr("Database")),
+            ("menu:mWebMenu", "S", "web", "Web"),
+            ("menu:mMeshMenu", "S", "mesh", tr("Mesh")),
         ]),
         (tr("Data"), [
-            ("mActionOpenTable", "L", "attribute_table",
+            ("mActionOpenTable menu:mMenuFilterTable", "L",
+             "attribute_table",
              tr("Attribute Table")),
             ("mActionOpenFieldCalc", "L", "field_calculator",
              tr("Calculate Field")),
@@ -118,6 +134,7 @@ RIBBON = [
     (tr("View"), [
         (tr("Windows"), [
             ("panes:reset", "L", "reset_panes", tr("Reset Panes")),
+            ("menu:mPanelMenu", "L", "panes", tr("Panes")),
             ("dock:Layers", "S", "contents", tr("Contents")),
             ("dock:Browser", "S", "catalog", tr("Catalog")),
             ("dock:ProcessingToolbox", "S", "geoprocessing",
@@ -127,22 +144,25 @@ RIBBON = [
             ("dock:MessageLog", "S", "message_log", tr("Messages")),
             ("dock:AdvancedDigitizingTools", "S", "advanced_digitizing",
              tr("Advanced Digitizing")),
+            ("menu:mToolbarMenu", "S", "toolbars", tr("Toolbars")),
         ]),
         (tr("View"), [
-            ("mActionNew3DMapCanvas", "L", "map_3d", tr("3D View")),
+            ("mActionNew3DMapCanvas menu:m3DMapViewsMenu", "L", "map_3d",
+             tr("3D View")),
             ("dock:Overview", "S", "overview", tr("Overview")),
             ("mActionTemporalController", "S", "temporal", tr("Time")),
         ]),
     ]),
     (tr("Edit"), [
         (tr("Clipboard"), [
-            ("mActionPasteFeatures", "L", "paste", tr("Paste")),
+            ("mActionPasteFeatures menu:mMenuPasteAs", "L", "paste",
+             tr("Paste")),
             ("mActionCutFeatures", "S", "cut", tr("Cut")),
             ("mActionCopyFeatures", "S", "copy", tr("Copy")),
         ]),
         (tr("Manage Edits"), [
             ("mActionToggleEditing", "L", "edit", tr("Edit")),
-            ("mActionSaveLayerEdits mActionSaveAllEdits", "L", "save_edits",
+            ("mActionSaveLayerEdits menu:AllEditsMenu", "L", "save_edits",
              tr("Save")),
             ("mActionRollbackEdits mActionRollbackAllEdits", "L",
              "discard_edits", tr("Discard")),
@@ -150,14 +170,27 @@ RIBBON = [
             ("mActionRedo", "S", "redo", tr("Redo")),
         ]),
         (tr("Snapping"), [
-            ("EnableSnappingAction mActionSnappingOptions", "L", "snapping",
+            ("EnableSnappingAction menu:SnappingTypeButton", "L", "snapping",
              tr("Snapping")),
+            ("menu:SnappingModeButton", "S", "snap_mode", tr("Mode")),
+            ("EnableTracingAction", "S", "tracing", tr("Tracing")),
+            ("TopologicalEditingAction", "S", "topological_editing",
+             tr("Topology")),
+            ("IntersectionSnappingAction", "S", "snap_intersection",
+             tr("Intersections")),
+            ("SelfSnappingAction", "S", "self_snapping", tr("Self-snapping")),
+            ("menu:avoidIntersectionsModeMenu", "S", "avoid_overlap",
+             tr("Overlap")),
             ("dock:AdvancedDigitizingTools", "S", "advanced_digitizing",
              tr("Advanced Digitizing")),
         ]),
         (tr("Features"), [
-            ("mActionAddFeature", "L", "create_feature", tr("Create")),
-            ("mActionVertexTool", "L", "vertex_tool", tr("Modify")),
+            ("mActionAddFeature mActionDigitizeWithSegment "
+             "mActionDigitizeWithCurve mActionStreamDigitize "
+             "mActionDigitizeWithBezier mActionDigitizeWithNurbs "
+             "mActionDigitizeShape", "L", "create_feature", tr("Create")),
+            ("mActionVertexTool mActionVertexToolActiveLayer "
+             "dock:VertexEditor", "L", "vertex_tool", tr("Modify")),
             ("mActionDeleteSelected", "L", "delete", tr("Delete")),
         ]),
         (tr("Shapes"), [
@@ -168,7 +201,8 @@ RIBBON = [
              tr("Polygon")),
         ]),
         (tr("Tools"), [
-            ("mActionMoveFeature", "S", "move", tr("Move")),
+            ("mActionMoveFeature mActionMoveFeatureCopy "
+             "mActionFeatureArray", "S", "move", tr("Move")),
             ("mActionRotateFeature", "S", "rotate", tr("Rotate")),
             ("mActionScaleFeature", "S", "scale", tr("Scale")),
             ("mActionSplitFeatures", "S", "split", tr("Split")),
@@ -208,23 +242,31 @@ RIBBON = [
     ]),
     (tr("Help"), [
         (tr("Help"), [
-            ("mActionHelpContents", "L", "help", tr("Help")),
+            ("mActionHelpContents menu:mHelpMenu", "L", "help",
+             tr("Help")),
         ]),
         (tr("Customize"), [
-            ("mActionManagePlugins", "L", "plugins", tr("Plugins")),
+            ("mActionManagePlugins menu:mPluginMenu", "L", "plugins",
+             tr("Plugins")),
             ("mActionOptions", "L", "options", tr("Options")),
         ]),
     ]),
 ]
 
-# Blue Project button: (action name, Pro icon).
+# Blue Project button: (action name or "menu:<QGIS menu>", Pro icon or None
+# for QGIS's own).
 PROJECT_MENU = [
     ("mActionNewProject", "new_project"),
     ("mActionOpenProject", "open_project"),
+    ("menu:mRecentProjectsMenu", None),
     ("mActionSaveProject", "save_project"),
     ("mActionSaveProjectAs", "save_as"),
+    ("mActionRevertProject", None),
+    ("mActionCloseProject", None),
+    ("menu:menuImport_Export", None),
     ("mActionProjectProperties", "project_properties"),
     ("mActionOptions", "options"),
+    ("menu:mSettingsMenu", None),
 ]
 # Quick Access Toolbar, as in Pro's title row.
 QUICK_ACCESS = ["mActionNewProject", "mActionOpenProject",
@@ -237,6 +279,14 @@ def find_action(win, name):
         dock = win.findChild(QDockWidget, name[5:])
         return dock.toggleViewAction() if dock else None
     return win.findChild(QAction, name)
+
+
+def find_menu(win, name):
+    """QGIS menu by object name, or the menu of a QGIS tool button."""
+    menu = win.findChild(QMenu, name)
+    if not menu and (button := win.findChild(QToolButton, name)):
+        menu = button.menu()
+    return menu
 
 
 def _shape_actions(win, kind):
@@ -278,16 +328,24 @@ def _button(iface, changes, names, size, icon, caption):
         else:
             actions = [a for a in (find_action(win, n)
                                    for n in names.split()) if a]
-        if not actions:
+        menu = next((m for n in names.split() if n.startswith("menu:")
+                     if (m := find_menu(win, n[5:]))), None)
+        if actions:
+            restyle(changes, actions[0], icon, caption)
+            button.setDefaultAction(actions[0])
+        elif menu:
+            button.setText(caption)
+            button.setIcon(pro_icon(icon))
+        else:
             return None
-        restyle(changes, actions[0], icon, caption)
-        button.setDefaultAction(actions[0])
-        if len(actions) > 1:
+        if not menu and len(actions) > 1:
             menu = QMenu(button)
             menu.addActions(actions)
+        if menu:
             button.setMenu(menu)
             button.setPopupMode(
-                QToolButton.ToolButtonPopupMode.MenuButtonPopup
+                QToolButton.ToolButtonPopupMode.MenuButtonPopup if actions
+                else QToolButton.ToolButtonPopupMode.InstantPopup
             )
     side = LARGE if large else SMALL
     button.setIconSize(QSize(side, side))
@@ -366,9 +424,15 @@ def _project_button(changes, win, toggle_action):
     button = QToolButton(objectName="ArcSkinProjectButton", text=tr("Project"))
     menu = QMenu(button)
     for name, icon in PROJECT_MENU:
+        if name.startswith("menu:"):
+            submenu = find_menu(win, name[5:])
+            if submenu:
+                menu.addMenu(submenu)
+            continue
         action = find_action(win, name)
         if action:
-            restyle(changes, action, icon)
+            if icon:
+                restyle(changes, action, icon)
             menu.addAction(action)
     menu.addSeparator()
     qgis_menu = menu.addMenu(tr("QGIS Menu"))
