@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        qgis: ["release-3_44", "latest"]
+        qgis: ["3.44", "latest"]
     container:
       image: qgis/qgis:${{ matrix.qgis }}
     steps:
