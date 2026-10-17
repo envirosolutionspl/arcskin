@@ -16,6 +16,7 @@ it is drawn. So disabling the skin writes QGIS's own icons into the theme
 folder, and enabling copies the Pro ones back; then everything is redrawn.
 """
 
+import configparser
 import os
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
@@ -36,6 +37,9 @@ ORIGINAL_KEY = "arcskin/original_ui_theme"
 DEFAULT_ICONS = ":/images/themes/default"
 # Application property: the restart notice was handled in this QGIS session.
 NOTICE = "arcskinRestartNotice"
+# File in the theme folder: plugin version and icon set ("pro" or "qgis")
+# the folder holds, so that ~1000 files are not written again needlessly.
+MARKER = "arcskin.version"
 
 
 # Cache key of each QGIS icon handed out -> its Pro theme file, while the
@@ -98,6 +102,30 @@ def _write(files):
             tr("{} icon files could not be written, e.g. {}").format(
                 len(failed), failed[0]),
             "ArcSkin", Qgis.MessageLevel.Warning)
+    return not failed
+
+
+def _version():
+    cfg = configparser.ConfigParser()
+    cfg.read(Path(__file__).resolve().parent / "metadata.txt",
+             encoding="utf-8")
+    return cfg["general"]["version"]
+
+
+def _marked(target, icons):
+    """Whether ``target`` holds this version's ``icons`` ("pro"/"qgis")."""
+    try:
+        return (target / MARKER).read_text() == f"{_version()} {icons}"
+    except OSError:
+        return False
+
+
+def _mark(target, icons):
+    """Record in ``target`` which icon set it holds (if it can be written)."""
+    try:
+        (target / MARKER).write_text(f"{_version()} {icons}")
+    except OSError:
+        pass
 
 
 def _write_qgis_icons(target):
@@ -109,7 +137,8 @@ def _write_qgis_icons(target):
         if default.open(QFile.OpenModeFlag.ReadOnly):
             files[path] = bytes(default.readAll())
             default.close()
-    _write(files)
+    if _write(files):
+        _mark(target, "qgis")
 
 
 def _redraw():
@@ -125,8 +154,10 @@ def install_icon_theme():
     if not os.access(folder, os.W_OK):
         folder = Path(QgsApplication.userThemesFolder())
     target = folder / THEME
-    _write({target / path.relative_to(SOURCE): path.read_bytes()
-            for path in SOURCE.rglob("*") if path.is_file()})
+    if not _marked(target, "pro") and _write(
+            {target / path.relative_to(SOURCE): path.read_bytes()
+             for path in SOURCE.rglob("*") if path.is_file()}):
+        _mark(target, "pro")
     QgsSettings().setValue(THEME_KEY, THEME)
     return target
 

@@ -139,10 +139,17 @@ class ProSymbology:
         registry.setRandomStyleColorScheme(scheme)
         style = QgsStyle.defaultStyle()
         ramps = [(RAMP_NAME, _ramp()), *pro_ramps()]
+        # Ramps from the previous QGIS session are still in the style (they
+        # are not removed at quit): adding them again would take seconds.
+        entity = QgsStyle.StyleEntity.ColorrampEntity
+        existing = set(style.colorRampNames())
+        tag = style.tagId(TAG)
+        tagged = set(style.symbolsWithTag(entity, tag)) if tag else set()
         for name, ramp in ramps:
-            style.addColorRamp(name, ramp, True)
-            style.tagSymbol(QgsStyle.StyleEntity.ColorrampEntity, name,
-                            [TAG])
+            if name not in existing:
+                style.addColorRamp(name, ramp, True)
+            if name not in tagged:
+                style.tagSymbol(entity, name, [TAG])
         project = QgsProject.instance()
         settings = project.styleSettings()
         previous_ramp = settings.defaultColorRamp()
