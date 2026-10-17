@@ -20,4 +20,12 @@ jobs:
       - name: Run the unit tests
         env:
           QT_QPA_PLATFORM: offscreen
-        run: python3 -m unittest discover -s tests -t . -v
+        shell: bash
+        # Failures also go to an annotation, which shows on the run page.
+        run: |
+          python3 -m unittest discover -s tests -t . -v 2>&1 | tee test.log \
+            && exit 0
+          report=$(sed -n '/^=\{20,\}$/,$p' test.log | head -c 4000)
+          report=${report//'%'/'%25'}
+          echo "::error title=Unit tests::${report//$'\n'/'%0A'}"
+          exit 1
