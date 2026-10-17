@@ -236,6 +236,10 @@
       <translation>Ikony warstw w Zawartości i Katalogu zmienią się po ponownym uruchomieniu QGIS.</translation>
     </message>
     <message>
+      <source>{} icon files could not be written, e.g. {}</source>
+      <translation>Nie udało się zapisać {} plików ikon, np. {}</translation>
+    </message>
+    <message>
       <source>Grid</source>
       <translation>Siatka</translation>
     </message>

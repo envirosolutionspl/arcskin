@@ -79,11 +79,13 @@ class ArcSkinPlugin:
         # QGIS also unloads plugins when it quits; it freezes the map canvas
         # first. Then the skin is left recorded as on (icon theme, original
         # window state) for the next start instead of being reverted.
-        if not self.iface.mapCanvas().isFrozen():
-            self.set_enabled(False)
-        self.iface.removePluginMenu(MENU_NAME, self.action)
-        if self.translator:
-            QCoreApplication.removeTranslator(self.translator)
+        try:
+            if not self.iface.mapCanvas().isFrozen():
+                self.set_enabled(False)
+        finally:
+            self.iface.removePluginMenu(MENU_NAME, self.action)
+            if self.translator:
+                QCoreApplication.removeTranslator(self.translator)
 
     def set_enabled(self, enabled: bool) -> None:
         """Apply the Pro look or restore the previous QGIS interface."""
@@ -98,7 +100,7 @@ class ArcSkinPlugin:
                 (8, lambda: changes.set(QApplication.instance(), "styleSheet",
                                         load_qss(THEME))),
                 (5, lambda: apply_icon_theme(self.iface, changes)),
-                (1, lambda: WindowDresser(changes)),
+                (1, lambda: WindowDresser(self.iface, changes)),
                 (1, lambda: build_ribbon(self.iface, changes, self.action)),
                 (1, lambda: arrange_panes(self.iface, changes)),
                 (1, lambda: frame_map(self.iface, changes)),
@@ -112,6 +114,15 @@ class ArcSkinPlugin:
                     step()
                     done += weight
                     progress.set(done / total)
+            except Exception:
+                # Half a skin is worse than none: back to plain QGIS, and
+                # the switch shows off. QGIS reports the error.
+                changes.undo()
+                self.changes = None
+                self.action.blockSignals(True)
+                self.action.setChecked(False)
+                self.action.blockSignals(False)
+                raise
             finally:
                 progress.done()
         elif not enabled and self.changes is not None:

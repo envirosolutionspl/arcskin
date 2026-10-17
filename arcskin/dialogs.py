@@ -2,9 +2,10 @@
 
 QGIS hands out icons it cached before the icon theme was active, so every
 window that gets focus has its known QGIS icons swapped for the Pro ones.
-The attribute table also gets Pro's toolbar order with captions:
-"Field: Add, Calculate | Selection: Select By Attributes, Zoom To, Switch,
-Clear, Delete, Copy", followed by the remaining QGIS tools.
+Attribute tables also get Pro's toolbar order with captions ("Field: Add,
+Calculate | Selection: Select By Attributes, Zoom To, Switch, Clear, Delete,
+Copy", then the remaining QGIS tools) and Pro's footer; those changes are
+undone for the tables still open when the skin is switched off.
 """
 
 from qgis.core import QgsProject
@@ -12,14 +13,17 @@ from qgis.PyQt import sip
 from qgis.PyQt.QtCore import QLocale, QObject, Qt
 from qgis.PyQt.QtGui import QAction, QFont, QGuiApplication
 from qgis.PyQt.QtWidgets import (
-    QApplication, QButtonGroup, QDialog, QFrame, QHBoxLayout, QLabel, QMenu,
+    QApplication, QButtonGroup, QDialog, QHBoxLayout, QLabel, QMenu,
     QSlider, QTableView, QToolBar, QToolButton, QWidget,
 )
 
 from .icon_theme import holders_in, swap_icons
-from .util import pro_icon, tr
+from .util import Changes, pro_icon, separator, tool_button, tr
 
-DRESSED = "arcskinDressed"
+# Widget properties marking what was done: icons swapped in a window,
+# an attribute table dressed.
+ICONS_DONE = "arcskinIconsSwapped"
+TABLE_DONE = "arcskinTableDressed"
 # Pro's attribute table toolbar: (label, [(QGIS action, icon, caption)]).
 TABLE_TOOLBAR = [
     (tr("Field:"), [
@@ -36,12 +40,8 @@ TABLE_TOOLBAR = [
         ("mActionCopySelectedRows", "copy", tr("Copy")),
     ]),
 ]
-
-
-def _tool(icon, tip, checkable=False):
-    button = QToolButton(autoRaise=True, checkable=checkable, toolTip=tip)
-    button.setIcon(pro_icon(icon))
-    return button
+# QGIS's own footer buttons, replaced by TableFooter.
+QGIS_FOOTER = ("mFilterButton", "mAttributeViewButton", "mTableViewButton")
 
 
 class TableFooter(QWidget):
@@ -56,40 +56,42 @@ class TableFooter(QWidget):
         super().__init__(objectName="ArcSkinTableFooter")
         self.layer = layer
         self.table = dialog.findChild(QTableView, "mTableView")
-        action = {a.objectName(): a for a in dialog.findChildren(QAction)}
-        self.filters = action
-        show_all = _tool("show_all_records", tr("Show all records"), True)
-        show_selected = _tool("show_selected_records",
-                              tr("Show selected records"), True)
+        self.actions = {a.objectName(): a
+                        for a in dialog.findChildren(QAction)}
+        show_all = tool_button("show_all_records", tr("Show all records"),
+                               True)
+        show_selected = tool_button("show_selected_records",
+                                    tr("Show selected records"), True)
         self.modes = QButtonGroup(self)
         for button, name in ((show_all, "mActionShowAllFilter"),
                              (show_selected, "mActionSelectedFilter")):
             self.modes.addButton(button)
-            button.clicked.connect(
-                lambda _=False, n=name: self._filter(n))
+            button.clicked.connect(lambda _=False, n=name: self._filter(n))
         show_all.setChecked(True)
-        first = _tool("first_record", tr("First record"))
+        first = tool_button("first_record", tr("First record"))
         first.clicked.connect(lambda: self._go(0))
-        last = _tool("last_record", tr("Last record"))
+        last = tool_button("last_record", tr("Last record"))
         last.clicked.connect(lambda: self._go(-1))
         self.count = QLabel()
-        extent = _tool("filter_extent", tr("Filter by map extent"), True)
+        extent = tool_button("filter_extent", tr("Filter by map extent"),
+                             True)
         extent.toggled.connect(
             lambda on: self._filter("mActionVisibleFilter" if on
                                     else "mActionShowAllFilter"))
-        edited = _tool("filter_edited", tr("Filter edited records"), True)
+        edited = tool_button("filter_edited", tr("Filter edited records"),
+                             True)
         edited.toggled.connect(
             lambda on: self._filter("mActionEditedFilter" if on
                                     else "mActionShowAllFilter"))
-        more = _tool("filter", tr("All filters"))
+        more = tool_button("filter", tr("All filters"))
         more.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
         button = dialog.findChild(QToolButton, "mFilterButton")
         if button:
             menu = QMenu(more)
             menu.addActions(button.actions())
             more.setMenu(menu)
-        zoom_out = _tool("zoom_out", tr("Zoom out"))
-        zoom_in = _tool("zoom_in", tr("Zoom in"))
+        zoom_out = tool_button("zoom_out", tr("Zoom out"))
+        zoom_in = tool_button("zoom_in", tr("Zoom in"))
         self.zoom = QSlider(Qt.Orientation.Horizontal, minimum=50,
                             maximum=200, value=100)
         self.zoom.setFixedWidth(110)
@@ -99,21 +101,21 @@ class TableFooter(QWidget):
         zoom_in.clicked.connect(lambda: self.zoom.setValue(
             self.zoom.value() + 10))
         self.zoom.valueChanged.connect(self.set_zoom)
-        refresh = _tool("refresh", tr("Refresh"))
-        if "mActionReload" in action:
-            refresh.clicked.connect(action["mActionReload"].trigger)
+        refresh = tool_button("refresh", tr("Refresh"))
+        if "mActionReload" in self.actions:
+            refresh.clicked.connect(self.actions["mActionReload"].trigger)
         self.base_font = QFont(self.table.font()) if self.table else None
         self.base_row = (self.table.verticalHeader().defaultSectionSize()
                          if self.table else 0)
         row = QHBoxLayout(self)
         row.setContentsMargins(4, 2, 4, 2)
         row.setSpacing(2)
-        for widget in (show_all, show_selected, _separator(), first, last,
+        for widget in (show_all, show_selected, separator(), first, last,
                        self.count):
             row.addWidget(widget)
         row.addStretch(1)  # what follows is aligned to the right edge
         for widget in (QLabel(tr("Filters:")), extent, edited, more,
-                       _separator(), zoom_out, self.zoom, zoom_in,
+                       separator(), zoom_out, self.zoom, zoom_in,
                        self.percent, refresh):
             row.addWidget(widget)
         for signal in (layer.selectionChanged, layer.featureAdded,
@@ -122,10 +124,12 @@ class TableFooter(QWidget):
         self.update_count()
 
     def _filter(self, name):
-        if name in self.filters:
-            self.filters[name].trigger()
+        """Trigger one of the dialog's filter actions, if it has it."""
+        if name in self.actions:
+            self.actions[name].trigger()
 
     def _go(self, row):
+        """Select row ``row`` of the table (-1: the last one)."""
         if self.table and self.table.model():
             model = self.table.model()
             index = model.index(row % max(model.rowCount(), 1), 0)
@@ -133,6 +137,7 @@ class TableFooter(QWidget):
             self.table.setCurrentIndex(index)
 
     def set_zoom(self, value):
+        """Scale the table's font and row height to ``value`` percent."""
         self.percent.setText(f"{value}%")
         if self.table and self.base_font:
             font = QFont(self.base_font)
@@ -142,33 +147,38 @@ class TableFooter(QWidget):
                 round(self.base_row * value / 100))
 
     def update_count(self, *_):
+        """"N of M selected" with the layer's current counts."""
         locale = QLocale()
         self.count.setText(tr("{} of {} selected").format(
             locale.toString(self.layer.selectedFeatureCount()),
             locale.toString(self.layer.featureCount())))
 
+    def remove(self):
+        """Take the footer out; the table keeps its size and font."""
+        self.zoom.setValue(100)
+        self.hide()
+        self.deleteLater()
 
-def _separator():
-    line = QFrame(objectName="ArcSkinFooterSeparator")
-    line.setFrameShape(QFrame.Shape.VLine)
-    return line
 
-
-def dress_attribute_table(dialog):
+def dress_attribute_table(dialog, changes):
+    """Pro's toolbar order, captions and footer for an attribute table."""
     bar = dialog.findChild(QToolBar, "mToolbar")
     if bar is None:
         return
-    actions = {a.objectName(): a for a in bar.actions() if a.objectName()}
-    rest = [a for a in bar.actions()]
-    bar.clear()
+    original = bar.actions()
+    actions = {a.objectName(): a for a in original if a.objectName()}
+    rest = list(original)
+    bar.clear()  # also deletes the labels and separators added below
+    changes.add(lambda: sip.isdeleted(bar)
+                or (bar.clear(), bar.addActions(original)))
     for label, items in TABLE_TOOLBAR:
         bar.addWidget(QLabel(label, objectName="ArcSkinToolbarLabel"))
         for name, icon, caption in items:
             action = actions.get(name)
             if action is None:
                 continue
-            action.setIcon(pro_icon(icon))
-            action.setIconText(caption)
+            changes.set(action, "icon", pro_icon(icon))
+            changes.set(action, "iconText", caption)
             bar.addAction(action)
             bar.widgetForAction(action).setToolButtonStyle(
                 Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
@@ -176,49 +186,69 @@ def dress_attribute_table(dialog):
         bar.addSeparator()
     bar.addActions(rest)
     for table in dialog.findChildren(QTableView, "mTableView"):
-        table.setAlternatingRowColors(True)
+        changes.set(table, "alternatingRowColors", True)
     layer_id = dialog.objectName().split("/", 1)[-1]
     layer = QgsProject.instance().mapLayer(layer_id)
     bottom = dialog.findChild(QHBoxLayout, "hboxLayout")
     if layer is None or bottom is None:
         return
-    footer = TableFooter(dialog, layer)  # first: hide QGIS's only if built
+    footer = TableFooter(dialog, layer)
     bottom.insertWidget(0, footer, 1)
-    for name in ("mFilterButton", "mAttributeViewButton",
-                 "mTableViewButton"):
+    changes.add(footer.remove)
+    for name in QGIS_FOOTER:
         widget = dialog.findChild(QWidget, name)
         if widget:
-            widget.hide()
+            changes.set(widget, "visible", False)
 
 
-def dress_window(window):
-    """Pro icons (and layout, for attribute tables) for a QGIS window."""
-    if window is None or sip.isdeleted(window) or window.property(DRESSED):
+def dress_window(window, changes):
+    """Pro icons for a QGIS window and Pro's layout for the attribute
+    tables in it (a window is checked again at every focus, as attribute
+    tables may be docked into the main window later)."""
+    if window is None or sip.isdeleted(window):
         return
-    window.setProperty(DRESSED, True)
-    widgets = [window] + window.findChildren(QWidget)
-    swap_icons(holders_in(widgets) + window.findChildren(QAction))
+    if not window.property(ICONS_DONE):
+        window.setProperty(ICONS_DONE, True)
+        widgets = [window] + window.findChildren(QWidget)
+        swap_icons(holders_in(widgets) + window.findChildren(QAction))
     for dialog in [window] + window.findChildren(QDialog):
-        if dialog.objectName().startswith("QgsAttributeTableDialog"):
-            dress_attribute_table(dialog)
+        if (dialog.objectName().startswith("QgsAttributeTableDialog")
+                and not dialog.property(TABLE_DONE)):
+            dialog.setProperty(TABLE_DONE, True)
+            changes.add(lambda d=dialog: sip.isdeleted(d)
+                        or d.setProperty(TABLE_DONE, None))
+            dress_attribute_table(dialog, changes)
 
 
 class WindowDresser(QObject):
-    """Dresses each window when it first gets focus."""
+    """Dresses the open windows and each window when it gets focus.
 
-    def __init__(self, changes):
-        app = QApplication.instance()
-        super().__init__(app)
+    The main window's icons are handled by the icon theme, so only its
+    attribute tables are dressed here. The changes made to attribute
+    tables are undone when the skin is switched off.
+    """
+
+    def __init__(self, iface, changes):
+        super().__init__(QApplication.instance())
+        self.changes = Changes()
+        win = iface.mainWindow()
+        win.setProperty(ICONS_DONE, True)
+        for widget in QApplication.topLevelWidgets():
+            if widget.isVisible():
+                dress_window(widget, self.changes)
         QGuiApplication.instance().focusWindowChanged.connect(self.dress)
         changes.add(self.stop)
 
     def dress(self, qwindow):
+        """Dress the widget behind the window that just got focus."""
         if qwindow is None:
             return
         for widget in QApplication.topLevelWidgets():
             if widget.windowHandle() is qwindow:
-                dress_window(widget)
+                dress_window(widget, self.changes)
 
     def stop(self):
+        """Undo the attribute table changes, stop watching windows."""
         QGuiApplication.instance().focusWindowChanged.disconnect(self.dress)
+        self.changes.undo()
         self.deleteLater()

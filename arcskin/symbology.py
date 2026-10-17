@@ -56,10 +56,14 @@ def _ramp():
 
 
 def _is_qgis_default(layer):
+    """Whether ``layer`` still has the single symbol QGIS gave it."""
     renderer = layer.renderer()
     if not isinstance(renderer, QgsSingleSymbolRenderer):
         return False
-    props = renderer.symbol().symbolLayer(0).properties()
+    symbol = renderer.symbol()
+    if symbol is None or not symbol.symbolLayerCount():
+        return False
+    props = symbol.symbolLayer(0).properties()
     # QGIS 4 writes colors as "r,g,b,a,rgb:...": compare the leading part.
     return all(str(props.get(k, "")).split(",rgb:")[0] == v
                for k, v in QGIS_DEFAULT.items())
@@ -162,20 +166,25 @@ class ProSymbology:
             registry.removeColorScheme(scheme)
             for name, _ in ramps:
                 style.removeColorRamp(name)
-            style.remove(QgsStyle.StyleEntity.TagEntity, style.tagId(TAG))
+            tag = style.tagId(TAG)
+            if tag:
+                style.remove(QgsStyle.StyleEntity.TagEntity, tag)
 
         changes.add(undo)
 
     def set_selection_color(self, *_):
+        """Pro's cyan selection, also for a project just read."""
         # QGIS applies the project's own selection color after reading it.
         QTimer.singleShot(0, lambda: self.canvas.setSelectionColor(SELECTION))
 
     @staticmethod
     def set_project_style(*_):
+        """Pro's palette and label font as the project's defaults."""
         _set_project_defaults(_ramp(), pro_text_format())
 
     @staticmethod
     def restyle(layers):
+        """Give layers added with QGIS's default symbol Pro's default."""
         for layer in layers:
             if isinstance(layer, QgsVectorLayer) and layer.isSpatial() \
                     and _is_qgis_default(layer):

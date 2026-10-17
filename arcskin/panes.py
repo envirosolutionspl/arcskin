@@ -120,9 +120,11 @@ def _search_row(changes, dock, placeholder, on_text, filters=()):
 
 
 def _dress_contents(changes, iface, dock):
+    """Contents pane: search row with the legend filters, List By views,
+    Pro legend and context menu icons, regular fonts, no toolbar."""
     bar = dock.findChild(QToolBar)
     filters = []
-    for action, icon in zip(bar.actions(), CONTENTS_ICONS):
+    for action, icon in zip(bar.actions() if bar else [], CONTENTS_ICONS):
         widget = bar.widgetForAction(action)
         target = widget if isinstance(widget, QToolButton) else action
         changes.set(target, "icon", pro_icon(icon))
@@ -142,7 +144,8 @@ def _dress_contents(changes, iface, dock):
     RasterLegend(iface.layerTreeView(), changes)
     # Pro has no toolbar here: these tools are on the ribbon and the
     # context menu (the legend filters moved next to the search box).
-    changes.set(bar, "visible", False)
+    if bar:
+        changes.set(bar, "visible", False)
     changes.add(lambda: proxy.setFilterText(""))
     # Pro's Contents: regular-weight names, check boxes on layers only.
     model = iface.layerTreeView().layerTreeModel()
@@ -161,16 +164,20 @@ def _dress_contents(changes, iface, dock):
 
 
 def _dress_catalog(changes, dock):
+    """Catalog pane: Pro icons, a permanent search box and the Project /
+    Favorites / All tabs, each showing a part of the Browser tree."""
     for name, icon in CATALOG_ICONS.items():
         action = dock.findChild(QAction, name)
         if action:
             changes.set(action, "icon", pro_icon(icon))
     show_filter = dock.findChild(QAction, "mActionShowFilter")
-    if show_filter:
+    search = dock.findChild(QLineEdit, "mLeFilter")
+    if show_filter and search:
         changes.set(show_filter, "checked", True)
-        changes.set(dock.findChild(QLineEdit, "mLeFilter"),
-                    "placeholderText", tr("Search catalog"))
+        changes.set(search, "placeholderText", tr("Search catalog"))
     tree = dock.findChild(QgsBrowserTreeView)
+    if tree is None:
+        return
     tabs = QTabBar(objectName="ArcSkinPaneTabs", drawBase=False,
                    expanding=False)
     for title, _ in CATALOG_TABS:
@@ -225,8 +232,10 @@ def _dress_symbology(changes, dock):
 
 
 def _dress_toolbox(changes, dock):
+    """Geoprocessing pane: toolbox and tool icons, Pro's search prompt."""
     tree = dock.findChild(QTreeView)
-    changes.set(tree, "itemDelegate", ToolboxDelegate(tree))
+    if tree:
+        changes.set(tree, "itemDelegate", ToolboxDelegate(tree))
     search = dock.findChild(QLineEdit, "searchBox")
     if search:
         changes.set(search, "placeholderText", tr("Find Tools"))

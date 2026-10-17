@@ -20,7 +20,7 @@ import os
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
-from qgis.core import Qgis, QgsApplication, QgsSettings
+from qgis.core import Qgis, QgsApplication, QgsMessageLog, QgsSettings
 from qgis.PyQt.QtCore import QFile
 from qgis.PyQt.QtGui import QAction, QIcon, QPixmapCache
 from qgis.PyQt.QtWidgets import QAbstractButton, QApplication
@@ -81,12 +81,23 @@ def _swap_loaded_icons(win, replacement, changes=None):
 
 def _write(files):
     """Write {path: bytes}; in parallel, as writing ~1000 small files to
-    the QGIS install folder is slow (virus scanning)."""
+    the QGIS install folder is slow (virus scanning). A file that cannot
+    be written (locked, no permission) is logged and skipped: its icon
+    then keeps the look of whatever is in the file."""
     def write(item):
-        item[0].parent.mkdir(parents=True, exist_ok=True)
-        item[0].write_bytes(item[1])
+        path, data = item
+        try:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(data)
+        except OSError:
+            return path
     with ThreadPoolExecutor(8) as pool:
-        list(pool.map(write, files.items()))
+        failed = [path for path in pool.map(write, files.items()) if path]
+    if failed:
+        QgsMessageLog.logMessage(
+            tr("{} icon files could not be written, e.g. {}").format(
+                len(failed), failed[0]),
+            "ArcSkin", Qgis.MessageLevel.Warning)
 
 
 def _write_qgis_icons(target):

@@ -18,12 +18,12 @@ from qgis.PyQt import sip
 from qgis.PyQt.QtCore import QLocale, QMargins, QSize, Qt, QTimer
 from qgis.PyQt.QtGui import QAction, QActionGroup, QColor, QPen
 from qgis.PyQt.QtWidgets import (
-    QApplication, QComboBox, QDockWidget, QFrame, QHBoxLayout, QLabel,
-    QLineEdit, QMenu, QStackedWidget, QTabBar, QToolButton, QWidget,
+    QApplication, QComboBox, QDockWidget, QHBoxLayout, QLabel, QLineEdit,
+    QMenu, QStackedWidget, QTabBar, QToolButton, QWidget,
 )
 
 from . import coords
-from .util import pro_icon, tr
+from .util import pro_icon, separator, tool_button, tr
 
 UNIT_KEY = "arcskin/coordinate_format"
 # The project's own layer check states while Contents shows another map
@@ -139,6 +139,8 @@ class ViewTabs(QTabBar):
         applied to the layer tree, and check box changes update it. The
         project's own check states are kept aside meanwhile.
         """
+        if dock is not None and self._view(dock) is None:
+            dock = None  # the view was closed meanwhile
         project = QgsProject.instance()
         themes, root = project.mapThemeCollection(), project.layerTreeRoot()
         model = self.iface.layerTreeView().layerTreeModel()
@@ -173,6 +175,7 @@ class ViewTabs(QTabBar):
                           project.title() or project.baseName() or tr("Map"))
 
     def _view(self, dock):
+        """The map canvas inside a map view dock (None once it is gone)."""
         if dock is None or sip.isdeleted(dock):
             return None
         return dock.findChild(QgsMapCanvas)
@@ -190,6 +193,7 @@ class ViewTabs(QTabBar):
         return name
 
     def _edited(self, *_):
+        """A check box changed in Contents: remember it in the view."""
         if not self.switching:  # the user's change, not a theme applied
             self._save_view()
 
@@ -204,6 +208,7 @@ class ViewTabs(QTabBar):
             self.iface.layerTreeView().layerTreeModel()))
 
     def _forget(self):
+        """The project was cleared: nothing to go back to."""
         self.active, self.extents = None, {}
         self.saved = self.checks = None
 
@@ -295,12 +300,15 @@ class ScaleBox(QComboBox):
         self.show_scale(canvas.scale())
 
     def text(self, scale):
+        """'1:24 000' for a scale denominator."""
         return "1:" + self.locale.toString(round(scale))
 
     def show_scale(self, scale):
+        """Follow the canvas."""
         self.setEditText(self.text(scale))
 
     def apply_text(self):
+        """Zoom to the scale typed in, whatever its punctuation."""
         digits = re.sub(r"\D", "", self.currentText().split(":")[-1])
         if digits:
             self.canvas.zoomScale(int(digits))
@@ -317,10 +325,12 @@ class ReferenceGrid(QgsMapCanvasItem):
         self.follow()
 
     def follow(self):
+        """Cover the canvas after it moved."""
         self.setRect(self.canvas.extent())
         self.update()
 
     def paint(self, painter, option=None, widget=None):
+        """Lines every 1, 2 or 5 x 10^n map units, at least 60 px apart."""
         extent = self.canvas.extent()
         per_pixel = self.canvas.mapUnitsPerPixel()
         size = 10 ** math.floor(math.log10(60 * per_pixel))
@@ -340,18 +350,6 @@ class ReferenceGrid(QgsMapCanvasItem):
             b = self.toCanvasCoordinates(QgsPointXY(extent.xMaximum(), y))
             painter.drawLine(a - origin, b - origin)
             y += step
-
-
-def _separator():
-    line = QFrame(objectName="ArcSkinFooterSeparator")
-    line.setFrameShape(QFrame.Shape.VLine)
-    return line
-
-
-def _button(icon, tip, checkable=False):
-    button = QToolButton(autoRaise=True, checkable=checkable, toolTip=tip)
-    button.setIcon(pro_icon(icon))
-    return button
 
 
 def _mirror(button, action):
@@ -384,12 +382,12 @@ class MapFooter(QWidget):
             self.unit = "dd"
         self.scale = ScaleBox(canvas)
 
-        snapping = _button("snapping", tr("Snapping"), True)
+        snapping = tool_button("snapping", tr("Snapping"), True)
         _mirror(snapping, win.findChild(QAction, "EnableSnappingAction"))
-        grid = _button("grid", tr("Grid"), True)
+        grid = tool_button("grid", tr("Grid"), True)
         self.grid = None
         grid.toggled.connect(self.show_grid)
-        constraints = _button("constraints", tr("Constraints"), True)
+        constraints = tool_button("constraints", tr("Constraints"), True)
         _mirror(constraints, win.findChild(QAction, "mEnableAction"))
 
         self.coords = QLineEdit(objectName="ArcSkinCoordinates",
@@ -407,33 +405,34 @@ class MapFooter(QWidget):
             Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
         self.crs.clicked.connect(self._crs_dialog)
 
-        self.selected = _button("select", tr("Zoom to selected features"))
+        self.selected = tool_button("select",
+                                    tr("Zoom to selected features"))
         self.selected.setToolButtonStyle(
             Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
         self.selected.clicked.connect(self.zoom_to_selection)
-        self.clear = _button("clear_selection", tr("Clear selection"))
+        self.clear = tool_button("clear_selection", tr("Clear selection"))
         deselect = win.findChild(QAction, "mActionDeselectAll")
         if deselect:
             self.clear.clicked.connect(deselect.trigger)
-        pause = _button("pause_drawing", tr("Pause drawing"), True)
+        pause = tool_button("pause_drawing", tr("Pause drawing"), True)
         pause.toggled.connect(lambda on: canvas.setRenderFlag(not on))
-        self.stop = _button("stop_drawing",
-                            tr("Drawing… click to cancel"))
-        self.stop.clicked.connect(canvas.stopRendering)
-        self.stop.hide()
-        self.refresh = _button("refresh", tr("Refresh map"))
-        self.refresh.clicked.connect(canvas.refreshAllLayers)
+        self.stop_button = tool_button("stop_drawing",
+                                       tr("Drawing… click to cancel"))
+        self.stop_button.clicked.connect(canvas.stopRendering)
+        self.stop_button.hide()
+        self.refresh_button = tool_button("refresh", tr("Refresh map"))
+        self.refresh_button.clicked.connect(canvas.refreshAllLayers)
 
         row = QHBoxLayout(self)
         row.setContentsMargins(6, 1, 6, 1)
         row.setSpacing(4)
         for item in (self.scale, None, snapping, grid, constraints, None,
                      self.coords, units, None, self.crs):
-            row.addWidget(item or _separator())
+            row.addWidget(item or separator())
         row.addStretch()
         for item in (self.selected, None, self.clear, None, pause, None,
-                     self.stop, self.refresh):
-            row.addWidget(item or _separator())
+                     self.stop_button, self.refresh_button):
+            row.addWidget(item or separator())
 
         canvas.xyCoordinates.connect(self.show_coordinates)
         canvas.selectionChanged.connect(self.count_selection)
@@ -451,6 +450,7 @@ class MapFooter(QWidget):
     # --- coordinates -----------------------------------------------------
 
     def _unit_menu(self, parent):
+        """Display units: angular and grid ones, then linear ones."""
         menu = QMenu(parent)
         group = QActionGroup(menu)
         self.linear_actions = []
@@ -469,6 +469,7 @@ class MapFooter(QWidget):
         return menu
 
     def _enable_linear_units(self):
+        """Linear units make sense for projected map coordinates only."""
         projected = self._map_crs().mapUnits() != Qgis.DistanceUnit.Degrees
         for action in self.linear_actions:
             action.setEnabled(projected)
@@ -477,11 +478,13 @@ class MapFooter(QWidget):
         return self.canvas.mapSettings().destinationCrs()
 
     def set_unit(self, unit):
+        """Switch the display unit and remember it across sessions."""
         self.unit = unit
         QgsSettings().setValue(UNIT_KEY, unit)
         self.show_coordinates(self.canvas.extent().center())
 
     def show_coordinates(self, point):
+        """Show the pointer's position in the display unit."""
         if self.coords.hasFocus():
             return  # the user is typing
         try:
@@ -491,6 +494,7 @@ class MapFooter(QWidget):
         self.coords.setText(text)
 
     def go_to_typed(self):
+        """Centre the map on the coordinates typed into the footer."""
         try:
             point = coords.parse_point(self.coords.text(), self.unit,
                                        self._map_crs())
@@ -506,26 +510,34 @@ class MapFooter(QWidget):
     # --- other parts -----------------------------------------------------
 
     def show_grid(self, on):
+        """Show or hide the reference grid over the map."""
         if on and self.grid is None:
             self.grid = ReferenceGrid(self.canvas)
         if self.grid is not None:
             self.grid.setVisible(on)
 
-    def remove_grid(self):
+    def remove(self):
+        """Take the footer away and leave the canvas as it was: drawing
+        resumed if it was paused here, no grid."""
+        if not self.canvas.renderFlag():
+            self.canvas.setRenderFlag(True)
         if self.grid is not None:
             self.canvas.extentsChanged.disconnect(self.grid.follow)
             self.canvas.scene().removeItem(self.grid)
             self.grid = None
+        self.hide()
+        self.deleteLater()
 
     def _drawing_started(self):
-        self.stop.show()
-        self.refresh.hide()
+        self.stop_button.show()
+        self.refresh_button.hide()
 
     def _drawing_finished(self):
-        self.stop.hide()
-        self.refresh.show()
+        self.stop_button.hide()
+        self.refresh_button.show()
 
     def show_crs(self):
+        """The project CRS as a button that opens its settings."""
         crs = QgsProject.instance().crs()
         self.crs.setText(crs.authid() or tr("No CRS"))
         self.crs.setToolTip(crs.description())
@@ -550,6 +562,7 @@ class MapFooter(QWidget):
             self.canvas.zoomToSelected(layers)
 
     def count_selection(self, *_):
+        """Selected features in all layers, as Pro counts them."""
         count = sum(layer.selectedFeatureCount()
                     for layer in QgsProject.instance().mapLayers().values()
                     if isinstance(layer, QgsVectorLayer))
@@ -567,16 +580,17 @@ def frame_map(iface, changes):
     win = iface.mainWindow()
     central = win.centralWidget()
     stack = central.findChild(QStackedWidget)
-    tabs = ViewTabs(iface)
-    tabs.setParent(stack)
-    height = tabs.sizeHint().height()
-    tabs.setGeometry(0, 0, 10000, height)  # clipped to the map's width
-    tabs.show()
-    changes.set(stack, "contentsMargins", QMargins(0, height, 0, 0))
+    if stack is not None:
+        tabs = ViewTabs(iface)
+        tabs.setParent(stack)
+        height = tabs.sizeHint().height()
+        tabs.setGeometry(0, 0, 10000, height)  # clipped to the map's width
+        tabs.show()
+        changes.set(stack, "contentsMargins", QMargins(0, height, 0, 0))
+        changes.add(lambda: (tabs.restore(), tabs.hide(),
+                             tabs.deleteLater()))
     footer = MapFooter(iface)
     grid = central.layout()
     grid.addWidget(footer, grid.rowCount(), 0)
-    changes.add(lambda: (tabs.restore(), tabs.hide(), tabs.deleteLater(),
-                         footer.remove_grid(),
-                         footer.hide(), footer.deleteLater()))
+    changes.add(footer.remove)
     changes.set(win.statusBar(), "visible", False)

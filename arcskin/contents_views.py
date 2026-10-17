@@ -112,11 +112,13 @@ class ContentsViews(QWidget):
         return header
 
     def show_map_name(self, *_):
+        """The project's title (or file name) heads the layer list."""
         project = QgsProject.instance()
         self.map_name.setText(project.title() or project.baseName()
                               or tr("Map"))
 
     def show_view(self, key):
+        """Switch to the List By view ``key``."""
         self.view = key
         self.buttons[key].setChecked(True)
         self.heading.setText(VIEWS[key][2])
@@ -126,6 +128,7 @@ class ContentsViews(QWidget):
         self.refresh()
 
     def refresh(self, *_):
+        """Rebuild the list of the current view from the project."""
         if self.view == "drawing_order" or not self.tree.isVisible():
             return
         self.tree.blockSignals(True)
@@ -149,6 +152,7 @@ class ContentsViews(QWidget):
         self.tree.blockSignals(False)
 
     def _layer_item(self, parent, layer):
+        """One row for ``layer``, with the check box of the current view."""
         item = QTreeWidgetItem(parent, [layer.name()])
         item.setIcon(0, QgsIconUtils.iconForLayer(layer))
         item.setData(0, LAYER_ROLE, layer.id())
@@ -176,6 +180,7 @@ class ContentsViews(QWidget):
             self.iface.setActiveLayer(layer)
 
     def _toggled(self, item, _column):
+        """Apply a check box change to the layer."""
         layer = self._layer(item)
         if not isinstance(layer, QgsVectorLayer):
             return
@@ -195,6 +200,7 @@ class ContentsViews(QWidget):
             project.setSnappingConfig(config)
 
     def remove(self):
+        """Back to QGIS's layer tree alone."""
         self.layer_tree_view.show()
         for widget in (self.tree, self.header, self):
             widget.hide()
@@ -236,6 +242,7 @@ MENU_ICONS = {
 
 
 def _menu_key(text):
+    """Menu text without accelerators, for matching across translations."""
     return text.replace("&", "").replace("...", "…").strip().lower()
 
 
@@ -261,6 +268,7 @@ class LayerMenuIcons(QObject):
         changes.add(self.stop)
 
     def dress(self, menu):
+        """Give the menu's entries Pro icons (QGIS's are kept for undo)."""
         for action in menu.actions():
             text = _menu_key(action.text())
             icon = (self.icons.get(action.objectName())
@@ -311,6 +319,7 @@ class RasterLegend(QObject):
                 if isinstance(node.layer(), QgsRasterLayer)]
 
     def dress(self):
+        """Pro's "Value" label and short ramp on every raster legend."""
         number = QgsNumericFormatContext()
         for node in self._raster_nodes():
             legend = self.model.layerLegendNodes(node)

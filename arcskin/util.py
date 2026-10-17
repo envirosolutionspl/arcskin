@@ -1,10 +1,11 @@
-"""Shared helpers: translation, Pro icons, undo log of interface changes."""
+"""Shared helpers: translation, Pro icons, small widgets, undo log."""
 
 from pathlib import Path
 
 from qgis.PyQt import sip
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.PyQt.QtGui import QIcon
+from qgis.PyQt.QtWidgets import QFrame, QToolButton
 
 ICON_DIR = Path(__file__).resolve().parent / "resources" / "icons" / "pro"
 
@@ -17,6 +18,20 @@ def tr(text):
 def pro_icon(name):
     """Return the bundled Pro-style icon ``name``."""
     return QIcon(str(ICON_DIR / f"{name}.svg"))
+
+
+def tool_button(icon, tip, checkable=False):
+    """Flat tool button with a Pro icon and a tooltip."""
+    button = QToolButton(autoRaise=True, checkable=checkable, toolTip=tip)
+    button.setIcon(pro_icon(icon))
+    return button
+
+
+def separator():
+    """Thin vertical line between groups of footer buttons."""
+    line = QFrame(objectName="ArcSkinFooterSeparator")
+    line.setFrameShape(QFrame.Shape.VLine)
+    return line
 
 
 class Changes:

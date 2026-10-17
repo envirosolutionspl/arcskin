@@ -642,12 +642,6 @@ QWidget#ArcSkinMapFooter QToolButton {
     font-size: 9pt;
 }
 
-QWidget#ArcSkinRibbonCorner QLineEdit {
-    background-color: @bg-panel;
-    border: 1px solid @border-light;
-    padding: 3px 6px;
-}
-
 QWidget#ArcSkinPaneSearch QLineEdit {
     padding: 3px 4px;
 }

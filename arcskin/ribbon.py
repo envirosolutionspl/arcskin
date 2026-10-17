@@ -189,6 +189,7 @@ RIBBON = [
     ]),
 ]
 
+# Blue Project button: (action name, Pro icon).
 PROJECT_MENU = [
     ("mActionNewProject", "new_project"),
     ("mActionOpenProject", "open_project"),
@@ -197,6 +198,9 @@ PROJECT_MENU = [
     ("mActionProjectProperties", "project_properties"),
     ("mActionOptions", "options"),
 ]
+# Quick Access Toolbar, as in Pro's title row.
+QUICK_ACCESS = ["mActionNewProject", "mActionOpenProject",
+                "mActionSaveProject", "mActionUndo", "mActionRedo"]
 
 
 def find_action(win, name):
@@ -215,6 +219,7 @@ def restyle(changes, action, icon, caption=None):
 
 
 def _button(iface, changes, names, size, icon, caption):
+    """Ribbon button for a RIBBON item; None when QGIS lacks the actions."""
     large = size == "L"
     button = QToolButton(autoRaise=True)
     if names == "gallery:basemaps":
@@ -282,6 +287,7 @@ def _group(caption, buttons):
 
 
 def _tab(groups):
+    """Ribbon tab page: the groups in a row, separated by thin lines."""
     page = QWidget()
     row = QHBoxLayout(page)
     row.setContentsMargins(2, 2, 2, 2)
@@ -321,22 +327,20 @@ def _project_button(changes, win, toggle_action):
     menu = QMenu(button)
     for name, icon in PROJECT_MENU:
         action = find_action(win, name)
-        restyle(changes, action, icon)
-        menu.addAction(action)
+        if action:
+            restyle(changes, action, icon)
+            menu.addAction(action)
     menu.addSeparator()
     qgis_menu = menu.addMenu(tr("QGIS Menu"))
     qgis_menu.addActions(win.menuBar().actions())
     menu.addAction(toggle_action)
-    menu.addSeparator()
-    menu.addAction(find_action(win, "mActionExit"))
+    exit_action = find_action(win, "mActionExit")
+    if exit_action:
+        menu.addSeparator()
+        menu.addAction(exit_action)
     button.setMenu(menu)
     button.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
     return button
-
-
-# Quick Access Toolbar, as in Pro's title row.
-QUICK_ACCESS = ["mActionNewProject", "mActionOpenProject",
-                "mActionSaveProject", "mActionUndo", "mActionRedo"]
 
 
 def _drop_down_results(changes):
@@ -394,6 +398,7 @@ class TitleRow(QWidget):
         self.show_project()
 
     def show_project(self, *_):
+        """Project title (or file name) as Pro shows the project's name."""
         project = QgsProject.instance()
         name = project.title() or project.baseName() or tr("Untitled")
         self.project.setText(name)

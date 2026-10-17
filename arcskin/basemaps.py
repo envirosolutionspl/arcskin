@@ -16,6 +16,7 @@ MARKER = "arcskin/basemap"  # custom property of layers added here
 
 
 def _xyz(url, zmax):
+    """QGIS XYZ tile layer URI for a tile URL template."""
     return f"type=xyz&url={url}&zmin=0&zmax={zmax}"
 
 
