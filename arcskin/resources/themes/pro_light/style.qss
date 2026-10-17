@@ -330,6 +330,12 @@ QTabWidget#ArcSkinRibbon > QTabBar::tab:selected {
     border-bottom: 1px solid @bg-panel;
 }
 
+QScrollArea#ArcSkinRibbonPage,
+QScrollArea#ArcSkinRibbonPage > QWidget > QWidget {
+    background: transparent;
+    border: none;
+}
+
 QToolButton#ArcSkinProjectButton {
     background-color: @accent;
     color: @bg-panel;

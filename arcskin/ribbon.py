@@ -12,7 +12,7 @@ from qgis.PyQt.QtCore import QSize, Qt
 from qgis.PyQt.QtGui import QAction
 from qgis.PyQt.QtWidgets import (
     QApplication, QDockWidget, QFrame, QHBoxLayout, QLabel, QMenu,
-    QTabWidget, QToolBar, QToolButton, QVBoxLayout, QWidget,
+    QScrollArea, QTabWidget, QToolBar, QToolButton, QVBoxLayout, QWidget,
 )
 
 from .basemaps import gallery_menu
@@ -385,7 +385,9 @@ def _group(caption, buttons):
 
 
 def _tab(groups):
-    """Ribbon tab page: the groups in a row, separated by thin lines."""
+    """Ribbon tab page: the groups in a row, separated by thin lines. It
+    scrolls sideways in a window narrower than the groups, so the ribbon
+    does not set the window's minimum width."""
     page = QWidget()
     row = QHBoxLayout(page)
     row.setContentsMargins(2, 2, 2, 2)
@@ -396,7 +398,13 @@ def _tab(groups):
         line.setFrameShape(QFrame.Shape.VLine)
         row.addWidget(line)
     row.addStretch()
-    return page
+    scroll = QScrollArea(objectName="ArcSkinRibbonPage",
+                         widgetResizable=True)
+    scroll.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+    scroll.setWidget(page)
+    scroll.setMinimumHeight(page.sizeHint().height()
+                            + scroll.horizontalScrollBar().sizeHint().height())
+    return scroll
 
 
 def _addin_groups(bars):

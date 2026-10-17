@@ -20,8 +20,20 @@ training rooms that teach both, and for organisations moving from Esri to QGIS.
 - Ribbon with *Map*, *Insert*, *Analysis*, *View*, *Edit*, *Share*, *Help* and
   *Add-ins* tabs built from QGIS's own tools, with Pro's captions and grouping.
   Plugin toolbars appear on *Add-ins*.
-- Blue *Project* button with project commands, the complete QGIS menu and the
-  ArcSkin switch.
+- Nothing of QGIS is out of reach: buttons drop down QGIS's own menus
+  (*Analysis → Tools*: Vector, Raster, Database, Web, Mesh; *View → Panes* with
+  every panel, plugin ones too; *Toolbars*; *Insert → Decorations*; *Add Data*,
+  *New Layer*, *Select*, *Help*, *Plugins*), so items that plugins add to them
+  show up as well.
+- *Edit* tab with all of QGIS's editing tools: digitizing techniques (curves,
+  stream, Bézier, NURBS), shapes (circle, ellipse, rectangle, regular polygon),
+  the advanced digitizing tools (parts, rings, simplify, offset, fillet,
+  trim/extend, reverse, split parts, merge attributes), the *Advanced
+  Digitizing* panel and every snapping option (types, layers, tracing,
+  topological editing, intersections, self-snapping, avoid overlap).
+- In a window narrower than a tab, the tab scrolls sideways.
+- Blue *Project* button with project commands, recent projects, import/export,
+  settings, the complete QGIS menu and the ArcSkin switch.
 - Title row with a Quick Access Toolbar, the project name and QGIS's search box
   centred at the top (like Pro's Command Search).
 - Basemap gallery: Topographic (OpenTopoMap), OpenStreetMap, Imagery (Sentinel-2
@@ -38,6 +50,8 @@ training rooms that teach both, and for organisations moving from Esri to QGIS.
   the mapping, editing or geoprocessing layout.
 
 ![Geoprocessing pane](docs/images/geoprocessing.png)
+
+![Edit tab while editing, with the Advanced Digitizing panel](docs/images/editing.png)
 
 **Map view**
 
@@ -181,7 +195,10 @@ C:\OSGeo4W\bin\python-qgis.bat -m unittest discover -s tests -t . -v
 
 `tests/smoke_in_qgis.py` is a smoke test for a running QGIS with ArcSkin on:
 run it from the Python console and it switches the look off and on, checking
-that QGIS comes back as it was and that the skin is complete.
+that QGIS comes back as it was and that the skin is complete. It also lists
+any tool of QGIS's core toolbars that no ribbon button or drop-down reaches
+(the label, raster, annotation, GPS and mesh toolbars are not on the ribbon
+yet).
 
 **Translations.** Texts in the code are English and go through `tr("...")`. After
 changing them run `python scripts/i18n.py update`, translate the new entries in
