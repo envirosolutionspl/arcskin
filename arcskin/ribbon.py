@@ -25,8 +25,9 @@ ADDIN_HOSTS = {"mPluginToolBar", "mWebToolBar", "mDatabaseToolBar",
                "mVectorToolBar"}
 # Tab -> groups -> items. An item is (action names, size, icon, caption):
 # extra action names form the drop-down menu of the button, "dock:<name>"
-# means the show/hide action of that dock widget, "gallery:basemaps" the
-# basemap gallery and "panes:reset" the Reset Panes button.
+# means the show/hide action of that dock widget, "shapes:<kind>" the shape
+# digitizing tools of that kind, "gallery:basemaps" the basemap gallery and
+# "panes:reset" the Reset Panes button.
 RIBBON = [
     (tr("Map"), [
         (tr("Clipboard"), [
@@ -124,6 +125,8 @@ RIBBON = [
             ("dock:LayerStyling", "S", "symbology", tr("Symbology")),
             ("dock:LayerOrder", "S", "layer_order", tr("Layer Order")),
             ("dock:MessageLog", "S", "message_log", tr("Messages")),
+            ("dock:AdvancedDigitizingTools", "S", "advanced_digitizing",
+             tr("Advanced Digitizing")),
         ]),
         (tr("View"), [
             ("mActionNew3DMapCanvas", "L", "map_3d", tr("3D View")),
@@ -149,11 +152,20 @@ RIBBON = [
         (tr("Snapping"), [
             ("EnableSnappingAction mActionSnappingOptions", "L", "snapping",
              tr("Snapping")),
+            ("dock:AdvancedDigitizingTools", "S", "advanced_digitizing",
+             tr("Advanced Digitizing")),
         ]),
         (tr("Features"), [
             ("mActionAddFeature", "L", "create_feature", tr("Create")),
             ("mActionVertexTool", "L", "vertex_tool", tr("Modify")),
             ("mActionDeleteSelected", "L", "delete", tr("Delete")),
+        ]),
+        (tr("Shapes"), [
+            ("shapes:circle", "S", "circle", tr("Circle")),
+            ("shapes:ellipse", "S", "ellipse", tr("Ellipse")),
+            ("shapes:rectangle", "S", "rectangle", tr("Rectangle")),
+            ("shapes:regular-polygon", "S", "regular_polygon",
+             tr("Polygon")),
         ]),
         (tr("Tools"), [
             ("mActionMoveFeature", "S", "move", tr("Move")),
@@ -162,6 +174,22 @@ RIBBON = [
             ("mActionSplitFeatures", "S", "split", tr("Split")),
             ("mActionMergeFeatures", "S", "merge", tr("Merge")),
             ("mActionReshapeFeatures", "S", "reshape", tr("Reshape")),
+        ]),
+        (tr("Modify"), [
+            ("mActionAddPart", "S", "add_part", tr("Add Part")),
+            ("mActionDeletePart", "S", "delete_part", tr("Delete Part")),
+            ("mActionSplitParts", "S", "split_parts", tr("Split Parts")),
+            ("mActionAddRing", "S", "add_ring", tr("Add Ring")),
+            ("mActionFillRing", "S", "fill_ring", tr("Fill Ring")),
+            ("mActionDeleteRing", "S", "delete_ring", tr("Delete Ring")),
+            ("mActionSimplifyFeature", "S", "simplify", tr("Simplify")),
+            ("mActionOffsetCurve", "S", "offset", tr("Offset")),
+            ("mActionChamferFillet", "S", "fillet", tr("Fillet")),
+            ("mActionTrimExtendFeature", "S", "trim_extend",
+             tr("Trim/Extend")),
+            ("mActionReverseLine", "S", "reverse_line", tr("Reverse")),
+            ("mActionMergeFeatureAttributes", "S", "merge_attributes",
+             tr("Merge Attributes")),
         ]),
         (tr("Attributes"), [
             ("mActionMultiEditAttributes", "L", "multi_edit",
@@ -211,6 +239,15 @@ def find_action(win, name):
     return win.findChild(QAction, name)
 
 
+def _shape_actions(win, kind):
+    """Shape digitizing tools of a kind ("circle", ...): QGIS gives them no
+    object names, only their shape id as data."""
+    bar = win.findChild(QToolBar, "mShapeDigitizeToolBar")
+    buttons = bar.findChildren(QToolButton) if bar else []
+    return [a for b in buttons if b.menu() for a in b.menu().actions()
+            if str(a.data()).startswith(kind)]
+
+
 def restyle(changes, action, icon, caption=None):
     """Give a QGIS action a Pro icon (and short caption) until undone."""
     changes.set(action, "icon", pro_icon(icon))
@@ -236,8 +273,11 @@ def _button(iface, changes, names, size, icon, caption):
         button.setPopupMode(QToolButton.ToolButtonPopupMode.MenuButtonPopup)
     else:
         win = iface.mainWindow()
-        actions = [a for a in (find_action(win, n) for n in names.split())
-                   if a]
+        if names.startswith("shapes:"):
+            actions = _shape_actions(win, names[7:])
+        else:
+            actions = [a for a in (find_action(win, n)
+                                   for n in names.split()) if a]
         if not actions:
             return None
         restyle(changes, actions[0], icon, caption)

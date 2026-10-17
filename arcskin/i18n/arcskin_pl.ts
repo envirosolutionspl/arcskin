@@ -432,8 +432,16 @@
       <translation>Obiekty</translation>
     </message>
     <message>
+      <source>Shapes</source>
+      <translation>Kształty</translation>
+    </message>
+    <message>
       <source>Tools</source>
       <translation>Narzędzia</translation>
+    </message>
+    <message>
+      <source>Modify</source>
+      <translation>Modyfikuj</translation>
     </message>
     <message>
       <source>Attributes</source>
@@ -588,6 +596,10 @@
       <translation>Komunikaty</translation>
     </message>
     <message>
+      <source>Advanced Digitizing</source>
+      <translation>Zaawansowana digitalizacja</translation>
+    </message>
+    <message>
       <source>3D View</source>
       <translation>Widok 3D</translation>
     </message>
@@ -620,8 +632,20 @@
       <translation>Utwórz</translation>
     </message>
     <message>
-      <source>Modify</source>
-      <translation>Modyfikuj</translation>
+      <source>Circle</source>
+      <translation>Okrąg</translation>
+    </message>
+    <message>
+      <source>Ellipse</source>
+      <translation>Elipsa</translation>
+    </message>
+    <message>
+      <source>Rectangle</source>
+      <translation>Prostokąt</translation>
+    </message>
+    <message>
+      <source>Polygon</source>
+      <translation>Wielokąt</translation>
     </message>
     <message>
       <source>Rotate</source>
@@ -642,6 +666,54 @@
     <message>
       <source>Reshape</source>
       <translation>Zmień kształt</translation>
+    </message>
+    <message>
+      <source>Add Part</source>
+      <translation>Dodaj część</translation>
+    </message>
+    <message>
+      <source>Delete Part</source>
+      <translation>Usuń część</translation>
+    </message>
+    <message>
+      <source>Split Parts</source>
+      <translation>Podziel części</translation>
+    </message>
+    <message>
+      <source>Add Ring</source>
+      <translation>Dodaj otwór</translation>
+    </message>
+    <message>
+      <source>Fill Ring</source>
+      <translation>Wypełnij otwór</translation>
+    </message>
+    <message>
+      <source>Delete Ring</source>
+      <translation>Usuń otwór</translation>
+    </message>
+    <message>
+      <source>Simplify</source>
+      <translation>Uprość</translation>
+    </message>
+    <message>
+      <source>Offset</source>
+      <translation>Odsuń</translation>
+    </message>
+    <message>
+      <source>Fillet</source>
+      <translation>Zaokrąglij</translation>
+    </message>
+    <message>
+      <source>Trim/Extend</source>
+      <translation>Przytnij/wydłuż</translation>
+    </message>
+    <message>
+      <source>Reverse</source>
+      <translation>Odwróć</translation>
+    </message>
+    <message>
+      <source>Merge Attributes</source>
+      <translation>Połącz atrybuty</translation>
     </message>
     <message>
       <source>Image</source>
