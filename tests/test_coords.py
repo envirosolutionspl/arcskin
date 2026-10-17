@@ -50,16 +50,18 @@ class FormatParse(unittest.TestCase):
 
     def test_group_separators_of_the_locale_are_understood(self):
         previous = QLocale()
-        QLocale.setDefault(QLocale("pl_PL"))  # "500 000" style numbers
-        try:
-            point = coords._transform(WARSAW, GEOGRAPHIC, WEB_MERCATOR)
-            # metres: UTM is written to 1 m, km to 0.01 km
-            for unit, tolerance in (("utm", 2), ("m", 0.1), ("km", 6),
-                                    ("dd", 2)):
-                with self.subTest(unit=unit):
-                    self.round_trip(unit, WEB_MERCATOR, point, tolerance)
-        finally:
-            QLocale.setDefault(previous)
+        point = coords._transform(WARSAW, GEOGRAPHIC, WEB_MERCATOR)
+        # "500 000" and "500,000" style numbers
+        for locale in ("pl_PL", "en_US"):
+            QLocale.setDefault(QLocale(locale))
+            try:
+                # metres: UTM is written to 1 m, km to 0.01 km
+                for unit, tolerance in (("utm", 2), ("m", 0.1), ("km", 6),
+                                        ("dd", 2)):
+                    with self.subTest(locale=locale, unit=unit):
+                        self.round_trip(unit, WEB_MERCATOR, point, tolerance)
+            finally:
+                QLocale.setDefault(previous)
 
     def test_linear_units_fall_back_to_degrees_on_a_geographic_map(self):
         text = coords.format_point(WARSAW, "km", GEOGRAPHIC)

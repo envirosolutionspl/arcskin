@@ -5,7 +5,7 @@ qgisMaximumVersion=4.99
 supportsQt6=True
 description=QGIS with an interface inspired by ArcGIS Pro: ribbon, panes, view tabs, status bar, icons and symbology. One click to switch it on or off.
 about=ArcSkin gives QGIS an interface inspired by ArcGIS Pro, for users who know Pro, for training rooms and for organisations moving to QGIS. It adds a ribbon (Map, Insert, Analysis, View, Edit, Share, Help, Add-ins) built from QGIS tools, with all of QGIS's tools and menus within reach, a Project menu and a title row with the search box; Pro-style panes (Contents with List By views, Catalog, Geoprocessing, Symbology); view tabs that show one map view at a time with its own layers and extent; Pro's map status bar with typed coordinates (DD, DMS, DDM, MGRS, USNG, UTM, linear units); a basemap gallery; Pro's attribute table toolbar and footer; Pro's default symbology, cyan selection, label font and about 100 colour ramps; and light, flat icons for all of QGIS. English and Polish. Switching the look off restores QGIS exactly as it was. Not affiliated with or endorsed by Esri; ArcGIS is a trademark of Esri.
-version=0.4.0
+version=0.4.1
 author=EnviroSolutions
 email=office@envirosolutions.pl
 
@@ -14,6 +14,7 @@ repository=https://github.com/envirosolutionspl/arcskin
 homepage=https://github.com/envirosolutionspl/arcskin
 
 changelog=
+    0.4.1 - Typed UTM and metre / kilometre coordinates are understood with English digit grouping (5,786,587).
     0.4.0 - The ribbon reaches all of QGIS: Edit tab with the advanced digitizing tools, shapes, digitizing techniques, all snapping options and the Advanced Digitizing panel; QGIS's Vector, Raster, Database, Web, Mesh, Panels, Toolbars and Decorations menus under ribbon buttons; recent projects, revert, close, import/export and settings in the Project menu. Ribbon tabs scroll sideways in narrow windows instead of widening the window. Faster start (the icon theme and colour ramps are not rewritten when unchanged). Typed coordinates with digit group separators are understood; point and line layers get Pro's default symbols too.
     0.3.1 - Attribute table changes are undone when the look is switched off; a failure while switching leaves plain QGIS; pausing drawing and the grid do not outlive the look; guards for QGIS builds lacking a widget or action; icon files that cannot be written are skipped with a warning.
     0.3.0 - View tabs showing one map view at a time (with its own layers in Contents and extent), 3D views and layouts as tabs; Pro colour ramps, label font and pastel raster icons; Pro-style Symbology pane; lighter icon outlines; progress box while switching; search results drop down; fixes for QGIS 4 (layout tabs, 3D view crash, layer and Browser icons restored when switching off).

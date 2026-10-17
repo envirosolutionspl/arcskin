@@ -131,6 +131,13 @@ def _parse_degrees(text):
     return sign * value, re.search(r"[NSns]", text) is not None
 
 
+def _float(text):
+    """Number written in the locale ("500,000.5" in English), else with a
+    point or a comma as the decimal separator."""
+    value, ok = QLocale().toDouble(text)
+    return value if ok else float(text.replace(",", "."))
+
+
 def _plain(text):
     """``text`` without the locale's digit group separators (500 000)."""
     return re.sub(r"(?<=\d)[\s\u00a0\u202f](?=\d{3}(?!\d))", "", text)
@@ -188,15 +195,13 @@ def parse_point(text, unit, map_crs):
         if not m:
             raise ValueError(text)
         crs = _utm_crs(int(m.group(1)), m.group(2).upper() == "N")
-        point = QgsPointXY(float(m.group(3).replace(",", ".")),
-                           float(m.group(4).replace(",", ".")))
+        point = QgsPointXY(_float(m.group(3)), _float(m.group(4)))
         return _transform(point, crs, map_crs)
     first, second = _split_pair(text)
     if unit in LINEAR and map_crs.mapUnits() != DU.Degrees:
         factor = QgsUnitTypes.fromUnitToUnitFactor(LINEAR[unit][1],
                                                    map_crs.mapUnits())
-        x, y = (float(re.sub(r"[^\d.,-]", "", v).replace(",", "."))
-                for v in (first, second))
+        x, y = (_float(re.sub(r"[^\d.,-]", "", v)) for v in (first, second))
         return QgsPointXY(x * factor, y * factor)
     (a, a_is_lat), (b, b_is_lat) = map(_parse_degrees, (first, second))
     lon, lat = (b, a) if a_is_lat and not b_is_lat else (a, b)
