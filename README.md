@@ -170,6 +170,19 @@ New-Item -ItemType SymbolicLink `
   -Target "$PWD\arcskin"
 ```
 
+**Tests.** `tests/` holds unit tests that need no QGIS window: coordinate
+formats, the undo log, the style sheet and icon references, default symbols
+and colour ramps, translations and metadata. Run them with QGIS's Python from
+the repository root (they also run in CI on QGIS 3.44 and the latest release):
+
+```powershell
+C:\OSGeo4W\bin\python-qgis.bat -m unittest discover -s tests -t . -v
+```
+
+`tests/smoke_in_qgis.py` is a smoke test for a running QGIS with ArcSkin on:
+run it from the Python console and it switches the look off and on, checking
+that QGIS comes back as it was and that the skin is complete.
+
 **Translations.** Texts in the code are English and go through `tr("...")`. After
 changing them run `python scripts/i18n.py update`, translate the new entries in
 `arcskin/i18n/arcskin_pl.ts` (Qt Linguist or a text editor) and the `.qm` files are

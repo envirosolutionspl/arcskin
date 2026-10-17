@@ -131,8 +131,17 @@ def _parse_degrees(text):
     return sign * value, re.search(r"[NSns]", text) is not None
 
 
+def _plain(text):
+    """``text`` without the locale's digit group separators (500 000)."""
+    return re.sub(r"(?<=\d)[\s\u00a0\u202f](?=\d{3}(?!\d))", "", text)
+
+
 def _split_pair(text):
-    """Two coordinates written with hemisphere letters, spaces or ';'."""
+    """Two coordinates separated by a wide gap or ';', or written with
+    hemisphere letters or single spaces."""
+    parts = [p for p in re.split(r"\s{2,}|;", text.strip()) if p]
+    if len(parts) == 2:
+        return parts
     parts = re.findall(r"[-+]?[^NSEWnsew;]+[NSEWnsew]", text)
     if len(parts) == 2:
         return parts
@@ -175,7 +184,7 @@ def parse_point(text, unit, map_crs):
         return _transform(_parse_mgrs(text), WGS84, map_crs)
     if unit == "utm":
         m = re.fullmatch(r"\s*(\d{1,2})\s*([NSns])[\s,;]+([\d.,]+)\s*m?\s*E?"
-                         r"[\s,;]+([\d.,]+)\s*m?\s*N?\s*", text)
+                         r"[\s,;]+([\d.,]+)\s*m?\s*N?\s*", _plain(text))
         if not m:
             raise ValueError(text)
         crs = _utm_crs(int(m.group(1)), m.group(2).upper() == "N")

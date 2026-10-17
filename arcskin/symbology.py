@@ -21,7 +21,8 @@ from qgis.core import (
     Qgis, QgsApplication, QgsColorScheme, QgsFillSymbol, QgsGradientColorRamp,
     QgsGradientStop, QgsLimitedRandomColorRamp, QgsLineSymbol,
     QgsMarkerSymbol, QgsPresetSchemeColorRamp, QgsProject,
-    QgsSingleSymbolRenderer, QgsStyle, QgsTextFormat, QgsVectorLayer,
+    QgsSingleSymbolRenderer, QgsStyle, QgsSymbol, QgsTextFormat,
+    QgsVectorLayer,
 )
 from qgis.PyQt.QtCore import QTimer
 from qgis.PyQt.QtGui import QColor, QFont
@@ -34,8 +35,8 @@ PALETTE = ["#FFBEE8", "#FFBEBE", "#FFD37F", "#89CD66", "#C29ED7", "#D3FFBE",
            "#E8BEFF", "#A3FF73", "#73DFFF", "#FF7F7F", "#CDAA66", "#E1E1E1"]
 OUTLINE = "110,110,110,255"
 SELECTION = QColor(0, 255, 255)
-# QGIS's own default symbol properties, used to recognise untouched layers.
-QGIS_DEFAULT = {"outline_color": "35,35,35,255", "outline_width": "0.26"}
+# Symbol properties QGIS draws at random for a new layer.
+RANDOM_KEYS = {"color", "line_color"}
 
 
 class ProColorScheme(QgsColorScheme):
@@ -56,17 +57,22 @@ def _ramp():
 
 
 def _is_qgis_default(layer):
-    """Whether ``layer`` still has the single symbol QGIS gave it."""
+    """Whether ``layer`` still has the single symbol QGIS gave it: the
+    default symbol of its geometry type, in whatever random colour."""
     renderer = layer.renderer()
     if not isinstance(renderer, QgsSingleSymbolRenderer):
         return False
     symbol = renderer.symbol()
-    if symbol is None or not symbol.symbolLayerCount():
+    default = QgsSymbol.defaultSymbol(layer.geometryType())
+    if (symbol is None or default is None
+            or symbol.symbolLayerCount() != default.symbolLayerCount()):
         return False
-    props = symbol.symbolLayer(0).properties()
-    # QGIS 4 writes colors as "r,g,b,a,rgb:...": compare the leading part.
-    return all(str(props.get(k, "")).split(",rgb:")[0] == v
-               for k, v in QGIS_DEFAULT.items())
+
+    def fingerprint(sym):
+        return {key: value
+                for key, value in sym.symbolLayer(0).properties().items()
+                if key not in RANDOM_KEYS}
+    return fingerprint(symbol) == fingerprint(default)
 
 
 def pro_symbol(layer):

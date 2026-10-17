@@ -1,0 +1,23 @@
+name: Tests
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        qgis: ["release-3_44", "latest"]
+    container:
+      image: qgis/qgis:${{ matrix.qgis }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run the unit tests
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: python3 -m unittest discover -s tests -t . -v
