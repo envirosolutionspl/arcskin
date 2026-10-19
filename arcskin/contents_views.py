@@ -310,8 +310,8 @@ class RasterLegend(QObject):
         self.timer.timeout.connect(self.dress)
         self.model.rowsInserted.connect(self.timer.start)
         self.model.modelReset.connect(self.timer.start)
+        changes.add(self.stop)  # before dressing: it may fail half-way
         self.dress()
-        changes.add(self.stop)
 
     def _raster_nodes(self):
         return [node for node in
@@ -340,7 +340,9 @@ class RasterLegend(QObject):
                         text(ramp.minimum(), number)))
                     ramp.setSettings(settings)
                 # Invalidating resets the size: shrink after it, then redraw.
-                ramp.invalidateDisplayData()
+                # (QGIS 3 has the old name of the method.)
+                getattr(ramp, "invalidateDisplayData",
+                        ramp.invalidateMapBasedData)()
                 ramp.setIconSize(RAMP_PATCH)
                 ramp.dataChanged.emit()
 

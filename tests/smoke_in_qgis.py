@@ -26,6 +26,8 @@ LATER = {"mActionRotatePointSymbols", "mActionOffsetPointSymbol",
          "mActionZoomActualSize", "mActionFeatureAction",
          "Circular string by radius",
          "Show Vertex Editor"}  # the ribbon has the Vertex Editor panel
+# Actions without an object name are known by their (translated) text.
+LATER |= {QCoreApplication.translate("QgisApp", text) for text in LATER}
 
 
 def toolbar_actions(bar):

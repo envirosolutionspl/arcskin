@@ -119,6 +119,7 @@ class ArcSkinPlugin:
                 # the switch shows off. QGIS reports the error.
                 changes.undo()
                 self.changes = None
+                self._restore_window()
                 self.action.blockSignals(True)
                 self.action.setChecked(False)
                 self.action.blockSignals(False)
@@ -132,14 +133,20 @@ class ArcSkinPlugin:
             finally:
                 progress.done()
             self.changes = None
-            state = settings.value(STATE_KEY)
-            if isinstance(state, QByteArray):
-                win.restoreState(state)
-            settings.remove(STATE_KEY)
-            bars = [b for b in win.findChildren(QToolBar)
-                    if b.parent() is win and b.actions()]
-            if not any(b.isVisible() for b in bars):
-                # The saved state was taken from a skinned window (e.g.
-                # after a crash): fall back to showing QGIS's toolbars.
-                for bar in bars:
-                    bar.show()
+            self._restore_window()
+
+    def _restore_window(self):
+        """Toolbars and panes as they were before the skin went on."""
+        win = self.iface.mainWindow()
+        settings = QgsSettings()
+        state = settings.value(STATE_KEY)
+        if isinstance(state, QByteArray):
+            win.restoreState(state)
+        settings.remove(STATE_KEY)
+        bars = [b for b in win.findChildren(QToolBar)
+                if b.parent() is win and b.actions()]
+        if not any(b.isVisible() for b in bars):
+            # The saved state was taken from a skinned window (e.g. after
+            # a crash): fall back to showing QGIS's toolbars.
+            for bar in bars:
+                bar.show()

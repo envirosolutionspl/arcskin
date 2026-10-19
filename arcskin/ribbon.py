@@ -179,7 +179,7 @@ RIBBON = [
             ("IntersectionSnappingAction", "S", "snap_intersection",
              tr("Intersections")),
             ("SelfSnappingAction", "S", "self_snapping", tr("Self-snapping")),
-            ("menu:avoidIntersectionsModeMenu", "S", "avoid_overlap",
+            ("menu:AvoidIntersectionsModeButton", "S", "avoid_overlap",
              tr("Overlap")),
             ("dock:AdvancedDigitizingTools", "S", "advanced_digitizing",
              tr("Advanced Digitizing")),
@@ -457,7 +457,9 @@ def _project_button(changes, win, toggle_action):
 
 def _drop_down_results(changes):
     """Open the locator's results below the search box, not above it (as
-    they would from the status bar)."""
+    they would from the status bar). Only once the search box is back in
+    the main window: Qt maps the anchor to the window and crashes (Qt 5)
+    when the box is not inside it."""
     for widget in QApplication.allWidgets():
         if widget.metaObject().className() == "QgsLocatorResultsView":
             popup = sip.cast(widget.parent(), QgsFloatingWidget)
@@ -488,14 +490,13 @@ class TitleRow(QWidget):
         self.project = QLabel(objectName="ArcSkinProjectName")
         row.addWidget(self.project)
         row.addStretch(1)
-        locator = win.statusBar().findChild(QWidget, "LocatorWidget")
-        if locator:
-            changes.set(locator, "minimumWidth", 420)
-            changes.set(locator, "maximumWidth", 420)
-            row.addWidget(locator)  # moved out of the hidden status bar
+        self.locator = win.statusBar().findChild(QWidget, "LocatorWidget")
+        if self.locator:
+            changes.set(self.locator, "minimumWidth", 420)
+            changes.set(self.locator, "maximumWidth", 420)
+            row.addWidget(self.locator)  # moved out of the status bar
             changes.add(lambda: iface.statusBarIface().addPermanentWidget(
-                locator, 0, QgsStatusBar.Anchor.AnchorLeft))
-            _drop_down_results(changes)
+                self.locator, 0, QgsStatusBar.Anchor.AnchorLeft))
         row.addStretch(1)
         messages = find_action(win, "dock:MessageLog")
         if messages:
@@ -548,8 +549,11 @@ def build_ribbon(iface, changes, toggle_action):
     stack = QVBoxLayout(frame)
     stack.setContentsMargins(0, 0, 0, 0)
     stack.setSpacing(0)
-    stack.addWidget(TitleRow(iface, changes))
+    title = TitleRow(iface, changes)
+    stack.addWidget(title)
     stack.addWidget(tabs)
     ribbon.addWidget(frame)
     win.addToolBar(Qt.ToolBarArea.TopToolBarArea, ribbon)
     changes.add(lambda: (win.removeToolBar(ribbon), ribbon.deleteLater()))
+    if title.locator:
+        _drop_down_results(changes)
