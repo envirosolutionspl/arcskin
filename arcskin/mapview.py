@@ -573,7 +573,7 @@ class MapFooter(QWidget):
 def frame_map(iface, changes):
     """Put view tabs above and the footer below the map canvas.
 
-    QGIS's own widgets are never moved: the map stack gets a top margin
+    QGIS's own widgets stay in place: the map stack gets a top margin
     that the tab bar covers, and the footer takes a new grid row. The QGIS
     status bar is hidden; its search box moves to the ribbon (ribbon.py).
     """
@@ -589,8 +589,33 @@ def frame_map(iface, changes):
         changes.set(stack, "contentsMargins", QMargins(0, height, 0, 0))
         changes.add(lambda: (tabs.restore(), tabs.hide(),
                              tabs.deleteLater()))
+        _lower_message_bar(iface.messageBar(), central.layout(), height,
+                           changes)
     footer = MapFooter(iface)
     grid = central.layout()
     grid.addWidget(footer, grid.rowCount(), 0)
     changes.add(footer.remove)
     changes.set(win.statusBar(), "visible", False)
+
+
+def _lower_message_bar(bar, grid, height, changes):
+    """Keep the QGIS message bar under the view tabs.
+
+    The bar shares the top grid cell with the map stack and overlays the
+    map, so a message (plugin updates, an error) would cover the tabs.
+    Row 0 is left to the tabs; the bar moves to row 1, which gets the
+    rest of the map's height.
+    """
+    row, column, rows, columns = grid.getItemPosition(grid.indexOf(bar))
+    grid.removeWidget(bar)
+    grid.addWidget(bar, 1, column, Qt.AlignmentFlag.AlignTop)
+    grid.setRowMinimumHeight(0, height - grid.verticalSpacing())
+    grid.setRowStretch(1, 1)
+
+    def restore():
+        grid.setRowStretch(1, 0)
+        grid.setRowMinimumHeight(0, 0)
+        grid.removeWidget(bar)
+        grid.addWidget(bar, row, column, rows, columns)
+
+    changes.add(restore)
