@@ -155,6 +155,8 @@ class TableFooter(QWidget):
 
     def remove(self):
         """Take the footer out; the table keeps its size and font."""
+        if sip.isdeleted(self):  # the table was closed (and deleted)
+            return
         self.zoom.setValue(100)
         self.hide()
         self.deleteLater()

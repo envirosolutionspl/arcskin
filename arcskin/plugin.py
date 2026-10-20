@@ -131,9 +131,11 @@ class ArcSkinPlugin:
             try:
                 self.changes.undo(progress.set)
             finally:
+                # Also after a failed step (undo reverts all the others):
+                # the window state and the switch must match plain QGIS.
                 progress.done()
-            self.changes = None
-            self._restore_window()
+                self.changes = None
+                self._restore_window()
 
     def _restore_window(self):
         """Toolbars and panes as they were before the skin went on."""

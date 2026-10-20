@@ -58,9 +58,20 @@ class Changes:
         self._undo.append(undo)
 
     def undo(self, progress=None):
-        """Revert all changes, newest first; ``progress(fraction done)``."""
+        """Revert all changes, newest first; ``progress(fraction done)``.
+
+        A step that fails does not stop the others: half a restore would
+        leave QGIS without its menus and toolbars. The first error is
+        raised once everything else has been reverted.
+        """
         total = len(self._undo)
+        error = None
         while self._undo:
-            self._undo.pop()()
+            try:
+                self._undo.pop()()
+            except Exception as failure:  # noqa: BLE001 (re-raised below)
+                error = error or failure
             if progress:
                 progress(1 - len(self._undo) / total)
+        if error is not None:
+            raise error

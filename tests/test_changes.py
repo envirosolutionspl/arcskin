@@ -39,6 +39,17 @@ class UndoLog(unittest.TestCase):
         sip.delete(obj)
         changes.undo()  # no error
 
+    def test_a_failing_step_does_not_stop_the_others(self):
+        seen = []
+        changes = Changes()
+        changes.add(lambda: seen.append("first"))
+        changes.add(lambda: 1 / 0)
+        changes.add(lambda: seen.append("last"))
+        with self.assertRaises(ZeroDivisionError):
+            changes.undo()
+        self.assertEqual(seen, ["last", "first"])
+        changes.undo()  # the log is empty afterwards
+
     def test_undo_reports_the_fraction_done(self):
         changes = Changes()
         for _ in range(4):
