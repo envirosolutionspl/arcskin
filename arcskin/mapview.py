@@ -606,7 +606,13 @@ def _lower_message_bar(bar, grid, height, changes):
     Row 0 is left to the tabs; the bar moves to row 1, which gets the
     rest of the map's height.
     """
-    row, column, rows, columns = grid.getItemPosition(grid.indexOf(bar))
+    index = grid.indexOf(bar)
+    if index < 0:
+        # Not in this grid (another plugin moved it?): nothing to lower.
+        # getItemPosition(-1) would hand back uninitialised numbers, and
+        # addWidget with those crashed QGIS (access violation).
+        return
+    row, column, rows, columns = grid.getItemPosition(index)
     grid.removeWidget(bar)
     grid.addWidget(bar, 1, column, Qt.AlignmentFlag.AlignTop)
     grid.setRowMinimumHeight(0, height - grid.verticalSpacing())
