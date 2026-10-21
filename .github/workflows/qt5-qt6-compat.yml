@@ -1,0 +1,35 @@
+name: Qt5 and Qt6 compatibility checker
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "**.py"
+      - ".github/workflows/qt5-qt6-compat.yml"
+  pull_request:
+    paths:
+      - "**.py"
+
+jobs:
+  qt5-qt6-compat:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/qgis/pyqgis4-checker:main-ubuntu
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate readable report (dry run)
+        run: /usr/local/bin/pyqt5_to_pyqt6.py --dry_run --logfile "$GITHUB_WORKSPACE/qt5_qt6_report.log" arcskin
+
+      - name: Show report in the run summary
+        run: tail -n +2 "$GITHUB_WORKSPACE/qt5_qt6_report.log" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Real job status
+        run: /usr/local/bin/pyqt5_to_pyqt6.py arcskin
+
+      - name: Upload report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qt5-qt6-compat-report
+          path: qt5_qt6_report.log

@@ -1,5 +1,10 @@
 # ArcSkin
 
+[![Tests](https://github.com/envirosolutionspl/arcskin/actions/workflows/tests.yml/badge.svg)](https://github.com/envirosolutionspl/arcskin/actions/workflows/tests.yml)
+[![Qt5 and Qt6 compatibility](https://github.com/envirosolutionspl/arcskin/actions/workflows/qt5-qt6-compat.yml/badge.svg)](https://github.com/envirosolutionspl/arcskin/actions/workflows/qt5-qt6-compat.yml)
+[![Security and quality](https://github.com/envirosolutionspl/arcskin/actions/workflows/security_and_quality.yml/badge.svg)](https://github.com/envirosolutionspl/arcskin/actions/workflows/security_and_quality.yml)
+[![Release](https://img.shields.io/github/v/release/envirosolutionspl/arcskin)](https://github.com/envirosolutionspl/arcskin/releases/latest)
+
 **ArcSkin gives QGIS an interface inspired by ArcGIS Pro**: a ribbon, Pro-style
 panes, view tabs above the map, Pro's map status bar, light flat icons for the whole
 of QGIS, Pro's default symbology and colour ramps. Everything is switched on with one

@@ -1,0 +1,90 @@
+name: Check Security and Quality of the Code
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  flake8:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: python -m pip install flake8
+
+      - name: Run flake8
+        run: flake8 --config=.flake8 . | tee "$RUNNER_TEMP/flake8.txt"
+
+      - name: Upload flake8 report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: flake8-report
+          path: ${{ runner.temp }}/flake8.txt
+
+      - name: Show report
+        if: always()
+        run: cat "$RUNNER_TEMP/flake8.txt" >> "$GITHUB_STEP_SUMMARY"
+
+  bandit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: python -m pip install bandit
+
+      - name: Run Bandit
+        run: bandit -ll -r arcskin | tee "$RUNNER_TEMP/bandit.txt"
+
+      - name: Upload Bandit report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: bandit-report
+          path: ${{ runner.temp }}/bandit.txt
+
+      - name: Show report
+        if: always()
+        run: cat "$RUNNER_TEMP/bandit.txt" >> "$GITHUB_STEP_SUMMARY"
+
+  detect-secrets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: python -m pip install detect-secrets
+
+      - name: Detect secrets
+        run: |
+          detect-secrets scan . | tee "$RUNNER_TEMP/secrets.txt"
+          python -c "import json,sys; r=json.load(open('$RUNNER_TEMP/secrets.txt'))['results']; sys.exit(1 if r else 0)"
+
+      - name: Upload secrets report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: secrets-report
+          path: ${{ runner.temp }}/secrets.txt
+
+      - name: Show report
+        if: always()
+        run: cat "$RUNNER_TEMP/secrets.txt" >> "$GITHUB_STEP_SUMMARY"

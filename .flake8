@@ -1,0 +1,4 @@
+[flake8]
+# Same baseline as the other envirosolutionspl plugin repos.
+extend-ignore = E302, E303, E501, F401, F405, W291, W293
+exclude = .git, __pycache__, dist, docs, demo, video_work
