@@ -51,9 +51,9 @@ jobs:
             -A "arcskin-release (GitHub Actions)" \
             -F "package=@dist/arcskin-${VERSION}.zip" \
             "https://plugins.qgis.org/plugins/api/arcskin/version/add/")
-          # Success redirects to the new version; a rejected package comes
-          # back as the form (200) with the errors.
-          if [ "$STATUS" != "302" ]; then
+          # Success is 201 Created; a rejected package comes back as the
+          # form (200) with the errors, a bad token as 403.
+          if [ "$STATUS" != "201" ]; then
             echo "::error::plugins.qgis.org answered HTTP $STATUS"
             sed -e 's/<[^>]*>//g' response.html | grep -v '^\s*$' \
               | grep -iE -m 20 "error|invalid|token|mismatch|already" || true
