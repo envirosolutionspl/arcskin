@@ -32,6 +32,19 @@ def referenced_icons():
     return names
 
 
+class ObjectNames(unittest.TestCase):
+    """Widget names other plugins find the skin's widgets by.
+
+    Plugins that adapt to ArcSkin look up its title row and coordinate box
+    by these names (they are the only way without importing ArcSkin).
+    Renaming one silently breaks them: treat the names as public.
+    """
+
+    def test_names_other_plugins_rely_on(self):
+        for name in ("ArcSkinTitleRow", "ArcSkinCoordinates"):
+            self.assertIn(f'objectName="{name}"', CODE, name)
+
+
 class Icons(unittest.TestCase):
 
     def test_every_referenced_pro_icon_exists(self):

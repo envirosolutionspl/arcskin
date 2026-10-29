@@ -12,7 +12,7 @@ from pathlib import Path
 from qgis.core import QgsSettings
 from qgis.PyQt.QtCore import QByteArray, QCoreApplication
 from qgis.PyQt.QtGui import QAction, QIcon
-from qgis.PyQt.QtWidgets import QApplication, QToolBar
+from qgis.PyQt.QtWidgets import QToolBar
 
 from .dialogs import WindowDresser
 from .icon_theme import apply_icon_theme
@@ -20,6 +20,7 @@ from .mapview import frame_map
 from .panes import arrange_panes
 from .progress import Progress
 from .ribbon import build_ribbon
+from .stylesheet import StyleSheetBlock
 from .symbology import ProSymbology
 from .util import Changes, tr
 
@@ -97,8 +98,8 @@ class ArcSkinPlugin:
             changes = self.changes = Changes()
             # (relative duration, step): the bar moves with the time spent.
             steps = [
-                (8, lambda: changes.set(QApplication.instance(), "styleSheet",
-                                        load_qss(THEME))),
+                (8, lambda: changes.add(
+                    StyleSheetBlock(win, load_qss(THEME)).remove)),
                 (5, lambda: apply_icon_theme(self.iface, changes)),
                 (1, lambda: WindowDresser(self.iface, changes)),
                 (1, lambda: build_ribbon(self.iface, changes, self.action)),

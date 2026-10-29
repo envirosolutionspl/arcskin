@@ -163,7 +163,8 @@ coast*) and a print layout. The data come from Natural Earth (public domain).
 
 ```
 arcskin/                      the plugin (packed into the ZIP)
-  plugin.py                   on / off switch, style sheet, progress box
+  plugin.py                   on / off switch, progress box
+  stylesheet.py               the skin's block in the application style sheet
   util.py                     tr(), Pro icons, undo log of all changes (Changes)
   ribbon.py                   ribbon, title row, Project menu
   panes.py                    Contents, Catalog, Geoprocessing, Symbology panes
@@ -187,6 +188,15 @@ docs/images/                  screenshots
 
 Every change ArcSkin makes to QGIS goes through `util.Changes`, which records how to
 undo it; switching off replays that log backwards.
+
+ArcSkin shares the application style sheet with QGIS (UI theme, font settings) and
+with other plugins that style the interface. Its rules sit in a marked block
+(`/* arcskin: begin */ … /* arcskin: end */`) in front of the rest of the sheet;
+switching off removes only that block, and if something replaces the whole sheet
+while the skin is on, the block is put back. A plugin that keeps its own block the
+same way can be switched on and off in any order together with ArcSkin. Plugins
+that adapt to ArcSkin can find its title row and coordinate box by the object names
+`ArcSkinTitleRow` and `ArcSkinCoordinates`.
 
 For development, link the plugin folder into your QGIS profile (PowerShell as
 administrator, or with Windows developer mode on):
