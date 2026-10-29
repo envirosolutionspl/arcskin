@@ -58,8 +58,10 @@ class TableFooter(QWidget):
         super().__init__(objectName="ArcSkinTableFooter")
         self.layer = layer
         self.table = dialog.findChild(QTableView, "mTableView")
-        self.actions = {a.objectName(): a
-                        for a in dialog.findChildren(QAction)}
+        # Not "actions": that would hide QWidget.actions() (the icon theme
+        # calls it on every widget when the skin goes on again).
+        self.table_actions = {a.objectName(): a
+                              for a in dialog.findChildren(QAction)}
         show_all = tool_button("show_all_records", tr("Show all records"),
                                True)
         show_selected = tool_button("show_selected_records",
@@ -104,8 +106,9 @@ class TableFooter(QWidget):
             self.zoom.value() + 10))
         self.zoom.valueChanged.connect(self.set_zoom)
         refresh = tool_button("refresh", tr("Refresh"))
-        if "mActionReload" in self.actions:
-            refresh.clicked.connect(self.actions["mActionReload"].trigger)
+        reload = self.table_actions.get("mActionReload")
+        if reload:
+            refresh.clicked.connect(reload.trigger)
         self.base_font = QFont(self.table.font()) if self.table else None
         self.base_row = (self.table.verticalHeader().defaultSectionSize()
                          if self.table else 0)
@@ -127,8 +130,8 @@ class TableFooter(QWidget):
 
     def _filter(self, name):
         """Trigger one of the dialog's filter actions, if it has it."""
-        if name in self.actions:
-            self.actions[name].trigger()
+        if name in self.table_actions:
+            self.table_actions[name].trigger()
 
     def _go(self, row):
         """Select row ``row`` of the table (-1: the last one)."""
