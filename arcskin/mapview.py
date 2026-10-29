@@ -4,6 +4,8 @@
   print layouts; a 2D view's tab shows it in place of the main map.
 * :class:`MapFooter` replaces the QGIS status bar with the layout of Pro's
   map view status bar.
+* :class:`MapAttribution` shows the credits of the layers drawn (basemap
+  copyrights) along the bottom of the map.
 """
 
 import math
@@ -15,7 +17,7 @@ from qgis.core import (
 )
 from qgis.gui import QgsMapCanvas, QgsMapCanvasItem
 from qgis.PyQt import sip
-from qgis.PyQt.QtCore import QLocale, QMargins, QSize, Qt, QTimer
+from qgis.PyQt.QtCore import QEvent, QLocale, QMargins, QSize, Qt, QTimer
 from qgis.PyQt.QtGui import QAction, QActionGroup, QColor, QPen
 from qgis.PyQt.QtWidgets import (
     QApplication, QComboBox, QDockWidget, QHBoxLayout, QLabel, QLineEdit,
@@ -570,6 +572,69 @@ class MapFooter(QWidget):
         self.clear.setEnabled(count > 0)
 
 
+class MapAttribution(QWidget):
+    """Credits strip along the bottom of the map, like Pro's attribution.
+
+    Left: the usage rights (layer metadata) of the layers drawn, elided to
+    one line, all of it in the tooltip. Right: "Powered by Esri" while an
+    Esri service is drawn, as Esri's terms ask. Hidden when nothing drawn
+    has credits.
+    """
+
+    def __init__(self, canvas):
+        super().__init__(canvas, objectName="ArcSkinAttribution")
+        self.canvas = canvas
+        self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground)
+        self.credits = QLabel()
+        self.esri = QLabel("Powered by Esri")  # Esri's wording, untranslated
+        row = QHBoxLayout(self)
+        row.setContentsMargins(4, 0, 4, 0)
+        row.addWidget(self.credits, 1)
+        row.addWidget(self.esri)
+        self.text = ""
+        canvas.layersChanged.connect(self.refresh)
+        # The canvas drops a removed layer without emitting layersChanged.
+        QgsProject.instance().layersRemoved.connect(self.refresh)
+        canvas.installEventFilter(self)
+        self.refresh()
+
+    def eventFilter(self, watched, event):  # noqa: N802 (Qt API name)
+        if event.type() == QEvent.Type.Resize:
+            self.place()
+        return False
+
+    def refresh(self, *_):
+        """Collect the credits of the layers the map draws now."""
+        credits, esri = [], False
+        for layer in self.canvas.layers():
+            for text in layer.metadata().rights():
+                if text and text not in credits:
+                    credits.append(text)
+            esri |= "arcgisonline.com" in layer.source()
+        self.text = " | ".join(credits)
+        self.credits.setToolTip(self.text)
+        self.esri.setVisible(esri)
+        self.setVisible(bool(credits) or esri)
+        self.place()
+
+    def place(self):
+        """Full width at the bottom of the map, credits cut to fit."""
+        height = self.sizeHint().height()
+        self.setGeometry(0, self.canvas.height() - height,
+                         self.canvas.width(), height)
+        room = self.canvas.width() - 12 - (
+            0 if self.esri.isHidden() else self.esri.sizeHint().width() + 8)
+        self.credits.setText(self.credits.fontMetrics().elidedText(
+            self.text, Qt.TextElideMode.ElideRight, max(room, 0)))
+
+    def remove(self):
+        self.canvas.removeEventFilter(self)
+        self.canvas.layersChanged.disconnect(self.refresh)
+        QgsProject.instance().layersRemoved.disconnect(self.refresh)
+        self.hide()
+        self.deleteLater()
+
+
 def frame_map(iface, changes):
     """Put view tabs above and the footer below the map canvas.
 
@@ -595,6 +660,7 @@ def frame_map(iface, changes):
     grid = central.layout()
     grid.addWidget(footer, grid.rowCount(), 0)
     changes.add(footer.remove)
+    changes.add(MapAttribution(iface.mapCanvas()).remove)
     changes.set(win.statusBar(), "visible", False)
 
 

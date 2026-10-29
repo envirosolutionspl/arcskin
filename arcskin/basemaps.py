@@ -20,26 +20,63 @@ def _xyz(url, zmax):
     return f"type=xyz&url={url}&zmin=0&zmax={zmax}"
 
 
+def _esri(service, zmax):
+    """XYZ URI of an Esri ArcGIS Online tile service (no API key needed).
+
+    ``zmax`` is the last level with data in Europe; QGIS upsamples beyond
+    it instead of showing Esri's "Map data not yet available" tiles.
+    """
+    return _xyz("https://services.arcgisonline.com/ArcGIS/rest/services/"
+                f"{service}/MapServer/tile/{{z}}/{{y}}/{{x}}", zmax)
+
+
 # (name, thumbnail icon, XYZ provider URI or None, attribution).
-# Only services with worldwide coverage.
+# Only services with worldwide coverage that need no API key.
 BASEMAPS = [
+    (tr("Imagery"), "basemap_imagery",
+     _esri("World_Imagery", 19),
+     "Esri, Vantor, Earthstar Geographics, and the GIS User Community"),
+    ("Sentinel-2 Cloudless", "basemap_sentinel",
+     _xyz("https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless_3857/default/g/"
+          "{z}/{y}/{x}.jpg", 15),
+     "Sentinel-2 cloudless - https://s2maps.eu by EOX IT Services GmbH "
+     "(Contains modified Copernicus Sentinel data 2016) | CC BY 4.0"),
+    (tr("Streets"), "basemap_streets",
+     _esri("World_Street_Map", 19),
+     "Esri, HERE, Garmin, USGS, © OpenStreetMap contributors, "
+     "and the GIS User Community"),
     (tr("Topographic"), "basemap_topo",
      _xyz("https://tile.opentopomap.org/{z}/{x}/{y}.png", 17),
      "© OpenStreetMap contributors, SRTM | © OpenTopoMap (CC-BY-SA)"),
     ("OpenStreetMap", "basemap_osm",
      _xyz("https://tile.openstreetmap.org/{z}/{x}/{y}.png", 19),
      "© OpenStreetMap contributors"),
-    (tr("Imagery"), "basemap_imagery",
-     _xyz("https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless_3857/default/g/"
-          "{z}/{y}/{x}.jpg", 15),
-     "Sentinel-2 cloudless - https://s2maps.eu by EOX IT Services GmbH "
-     "(Contains modified Copernicus Sentinel data 2016) | CC BY 4.0"),
+    (tr("Humanitarian"), "basemap_hot",
+     _xyz("https://a.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png", 19),
+     "© OpenStreetMap contributors, tiles style by Humanitarian "
+     "OpenStreetMap Team hosted by OpenStreetMap France"),
+    (tr("Terrain"), "basemap_terrain",
+     _esri("World_Terrain_Base", 9),
+     "Esri, USGS, NOAA"),
+    (tr("Hillshade"), "basemap_hillshade",
+     _esri("Elevation/World_Hillshade", 16),
+     "Esri, Vantor, Airbus DS, USGS, NGA, NASA, CGIAR, and the GIS user "
+     "community"),
+    (tr("Oceans"), "basemap_oceans",
+     _esri("Ocean/World_Ocean_Base", 10),
+     "Esri, Garmin, GEBCO, NOAA NGDC, and other contributors"),
+    (tr("National Geographic Style"), "basemap_natgeo",
+     _esri("NatGeo_World_Map", 12),
+     "National Geographic, Esri, Garmin, HERE, UNEP-WCMC, USGS, NASA, ESA, "
+     "METI, NRCAN, GEBCO, NOAA, increment P Corp."),
     (tr("Light Gray Canvas"), "basemap_light",
-     _xyz("https://basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png", 20),
-     "© OpenStreetMap contributors © CARTO"),
+     _esri("Canvas/World_Light_Gray_Base", 16),
+     "Esri, HERE, Garmin, © OpenStreetMap contributors, "
+     "and the GIS user community"),
     (tr("Dark Gray Canvas"), "basemap_dark",
-     _xyz("https://basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png", 20),
-     "© OpenStreetMap contributors © CARTO"),
+     _esri("Canvas/World_Dark_Gray_Base", 16),
+     "Esri, HERE, Garmin, © OpenStreetMap contributors, "
+     "and the GIS user community"),
     (tr("None"), "basemap_none", None, None),
 ]
 
