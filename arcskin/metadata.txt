@@ -4,7 +4,7 @@ qgisMinimumVersion=3.40
 qgisMaximumVersion=4.99
 description=QGIS with an interface inspired by ArcGIS Pro: ribbon, panes, view tabs, status bar, icons and symbology. One click to switch it on or off.
 about=ArcSkin gives QGIS an interface inspired by ArcGIS Pro, for users who know Pro, for training rooms and for organisations moving to QGIS. It adds a ribbon (Map, Insert, Analysis, View, Edit, Share, Help, Add-ins) built from QGIS tools, with all of QGIS's tools and menus within reach, a Project menu and a title row with the search box; Pro-style panes (Contents with List By views, Catalog, Geoprocessing, Symbology); view tabs that show one map view at a time with its own layers and extent; Pro's map status bar with typed coordinates (DD, DMS, DDM, MGRS, USNG, UTM, linear units); a basemap gallery; Pro's attribute table toolbar and footer; Pro's default symbology, cyan selection, label font and about 100 colour ramps; and light, flat icons for all of QGIS. English and Polish. Switching the look off restores QGIS exactly as it was. Not affiliated with or endorsed by Esri; ArcGIS is a trademark of Esri.
-version=0.5.0
+version=0.5.1
 author=EnviroSolutions
 email=office@envirosolutions.pl
 
@@ -13,6 +13,7 @@ repository=https://github.com/envirosolutionspl/arcskin
 homepage=https://github.com/envirosolutionspl/arcskin
 
 changelog=
+    0.5.1 - The skin's style sheet is kept as its own block in the application style sheet: switching off removes only that block, and a style sheet set by QGIS (interface font) or by another plugin while the skin is on no longer wipes the look. supportsQt6 dropped from the metadata (deprecated by plugins.qgis.org; QGIS 4 support comes from qgisMaximumVersion).
     0.5.0 - Basemaps that need no API key: Light and Dark Gray Canvas now come from Esri (CARTO tiles carried an "API key required" watermark); new Imagery (Esri), Streets, Terrain, Hillshade, Oceans, National Geographic Style and Humanitarian (OSM) basemaps; Sentinel-2 Cloudless kept. Attribution strip along the bottom of the map with the credits of the layers drawn and "Powered by Esri" for Esri basemaps.
     0.4.5 - Switching the look off after an attribute table had been opened and closed no longer ends in a Python error with QGIS only half restored; a step that fails while restoring no longer stops the others.
     0.4.4 - No crash when the skin is switched on while the QGIS message bar is not in the main window's layout (moved by another plugin); the bar then stays where it is.
