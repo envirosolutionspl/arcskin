@@ -120,9 +120,19 @@ last record, "N of M selected", filters, zoom slider, refresh).
 
 ## Installation
 
-1. Download `arcskin-<version>.zip` from the releases.
+From the QGIS plugin repository: *Plugins → Manage and Install Plugins… → All*,
+search for **ArcSkin**, click *Install Plugin*. ArcSkin is marked experimental:
+tick *Show also experimental plugins* under *Settings* in the same dialog first.
+
+Or from a ZIP file:
+
+1. Download `arcskin-<version>.zip` from the
+   [releases](https://github.com/envirosolutionspl/arcskin/releases).
 2. In QGIS open *Plugins → Manage and Install Plugins… → Install from ZIP*,
    choose the file and click *Install Plugin*.
+
+The ZIP from GitHub's *Code → Download ZIP* button is the whole repository, not
+the plugin: QGIS cannot load it ("No module named 'arcskin-main/arcskin'").
 
 The ArcSkin look is applied as soon as the plugin is installed. Switching takes a
 few seconds; a progress box shows the work.
