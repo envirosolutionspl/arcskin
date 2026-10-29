@@ -294,6 +294,27 @@ class LayerMenuIcons(QObject):
 RAMP_PATCH = QSize(16, 36)  # about two text rows, as in Pro
 
 
+def ramp_limits(ramp):
+    """(minimum, maximum) of a ramp legend node, None if unknown.
+
+    QGIS 4 has them on the node; QGIS 3 only on the layer's renderer:
+    the shader of a pseudocolor one, the contrast stretch of a grey one.
+    """
+    if hasattr(ramp, "maximum"):
+        return ramp.minimum(), ramp.maximum()
+    renderer = ramp.layerNode().layer().renderer()
+    shader = renderer.shader() if hasattr(renderer, "shader") else None
+    if shader is not None:
+        source = shader.rasterShaderFunction()
+    elif hasattr(renderer, "contrastEnhancement"):
+        source = renderer.contrastEnhancement()
+    else:
+        source = None
+    if source is None:
+        return None
+    return source.minimumValue(), source.maximumValue()
+
+
 class RasterLegend(QObject):
     """Pro-style legend of stretched single band rasters.
 
@@ -332,12 +353,14 @@ class RasterLegend(QObject):
                     item.setUserLabel(tr("Value"))
             for ramp in ramps:
                 settings = ramp.settings()
-                if not (settings.maximumLabel() or settings.minimumLabel()):
+                limits = ramp_limits(ramp)
+                if limits and not (settings.maximumLabel()
+                                   or settings.minimumLabel()):
                     text = settings.numericFormat().formatDouble
                     settings.setMaximumLabel(tr("High : {}").format(
-                        text(ramp.maximum(), number)))
+                        text(limits[1], number)))
                     settings.setMinimumLabel(tr("Low : {}").format(
-                        text(ramp.minimum(), number)))
+                        text(limits[0], number)))
                     ramp.setSettings(settings)
                 # Invalidating resets the size: shrink after it, then redraw.
                 # (QGIS 3 has the old name of the method.)
