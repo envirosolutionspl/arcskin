@@ -93,7 +93,11 @@ class ArcSkinPlugin:
         win = self.iface.mainWindow()
         settings = QgsSettings()
         if enabled and self.changes is None:
-            if settings.value(STATE_KEY) is None:
+            # The skin goes on for the first time (not again at a QGIS
+            # start): only then do the panes move to Pro's places, so
+            # that panes the user moved stay where QGIS restored them.
+            first = settings.value(STATE_KEY) is None
+            if first:
                 settings.setValue(STATE_KEY, win.saveState())
             changes = self.changes = Changes()
             # (relative duration, step): the bar moves with the time spent.
@@ -103,7 +107,7 @@ class ArcSkinPlugin:
                 (5, lambda: apply_icon_theme(self.iface, changes)),
                 (1, lambda: WindowDresser(self.iface, changes)),
                 (1, lambda: build_ribbon(self.iface, changes, self.action)),
-                (1, lambda: arrange_panes(self.iface, changes)),
+                (1, lambda: arrange_panes(self.iface, changes, first)),
                 (1, lambda: frame_map(self.iface, changes)),
                 (3, lambda: ProSymbology(changes, self.iface.mapCanvas())),
             ]

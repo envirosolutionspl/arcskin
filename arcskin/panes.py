@@ -285,8 +285,9 @@ def reset_panes_menu(win, parent):
     return menu
 
 
-def arrange_panes(iface, changes):
-    """Rename, dock and dress the panes like ArcGIS Pro."""
+def arrange_panes(iface, changes, place=True):
+    """Rename and dress the panes like ArcGIS Pro; ``place``: also move
+    them to Pro's places (else they stay where the user left them)."""
     win = iface.mainWindow()
     for name, (title, _, _) in PANES.items():
         dock = win.findChild(QDockWidget, name)
@@ -306,5 +307,6 @@ def arrange_panes(iface, changes):
         dock = win.findChild(QDockWidget, name)
         if dock:
             dress(dock)
-    reset_panes(win, close_others=False)
+    if place:
+        reset_panes(win, close_others=False)
     ActivePane(win, changes)
