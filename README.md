@@ -235,8 +235,8 @@ compiled when packaging. For a new language, add an empty
 Actions builds the ZIP and attaches it to the release. It also uploads the ZIP
 to [plugins.qgis.org](https://plugins.qgis.org/plugins/arcskin/), where the new
 version waits for approval. This needs a token from the plugin's *Tokens* page
-on plugins.qgis.org stored as the repository secret `QGIS_PLUGIN_TOKEN`;
-without it the upload is skipped.
+on plugins.qgis.org, kept in the GitHub repository settings (Actions) under the
+name `QGIS_PLUGIN_TOKEN`; without it the upload is skipped.
 
 ## Credits and licence
 
