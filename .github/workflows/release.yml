@@ -34,3 +34,29 @@ jobs:
         with:
           files: dist/*.zip
           generate_release_notes: true
+
+      # The new version waits on plugins.qgis.org until its staff approve it.
+      # The token comes from the plugin's Tokens page on plugins.qgis.org.
+      - name: Upload to plugins.qgis.org
+        env:
+          QGIS_PLUGIN_TOKEN: ${{ secrets.QGIS_PLUGIN_TOKEN }}
+        run: |
+          if [ -z "$QGIS_PLUGIN_TOKEN" ]; then
+            echo "::notice::QGIS_PLUGIN_TOKEN secret not set, upload skipped"
+            exit 0
+          fi
+          VERSION=$(grep -E '^version=' arcskin/metadata.txt | cut -d= -f2)
+          STATUS=$(curl -sS -o response.html -w "%{http_code}" \
+            -H "Authorization: Bearer ${QGIS_PLUGIN_TOKEN}" \
+            -A "arcskin-release (GitHub Actions)" \
+            -F "package=@dist/arcskin-${VERSION}.zip" \
+            "https://plugins.qgis.org/plugins/api/arcskin/version/add/")
+          # Success redirects to the new version; a rejected package comes
+          # back as the form (200) with the errors.
+          if [ "$STATUS" != "302" ]; then
+            echo "::error::plugins.qgis.org answered HTTP $STATUS"
+            sed -e 's/<[^>]*>//g' response.html | grep -v '^\s*$' \
+              | grep -iE -m 20 "error|invalid|token|mismatch|already" || true
+            exit 1
+          fi
+          echo "Version ${VERSION} uploaded, awaiting approval on plugins.qgis.org"

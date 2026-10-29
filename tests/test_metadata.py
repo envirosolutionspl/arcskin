@@ -32,8 +32,14 @@ class Metadata(unittest.TestCase):
         self.assertTrue((PLUGIN_DIR / self.meta["icon"]).exists())
 
     def test_flags_are_booleans(self):
-        for key in ("experimental", "deprecated", "server", "supportsQt6"):
+        for key in ("experimental", "deprecated", "server"):
             self.assertIn(self.meta[key], ("True", "False"), key)
+
+    def test_qgis4_support_comes_from_the_maximum_version(self):
+        # plugins.qgis.org reads QGIS 4 support from qgisMaximumVersion only
+        # and flags the old supportsQt6 key as deprecated.
+        self.assertNotIn("supportsQt6", self.meta)
+        self.assertGreaterEqual(float(self.meta["qgisMaximumVersion"]), 4.99)
 
     def test_packaging_reads_the_same_version(self):
         self.assertEqual(package.plugin_version(), self.meta["version"])

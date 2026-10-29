@@ -222,7 +222,11 @@ compiled when packaging. For a new language, add an empty
 **Packaging and releases.** `python scripts/package.py` writes
 `dist/arcskin-<version>.zip`. For a release, raise `version` in
 `arcskin/metadata.txt`, tag the commit `v<version>` and push the tag; GitHub
-Actions builds the ZIP and attaches it to the release.
+Actions builds the ZIP and attaches it to the release. It also uploads the ZIP
+to [plugins.qgis.org](https://plugins.qgis.org/plugins/arcskin/), where the new
+version waits for approval. This needs a token from the plugin's *Tokens* page
+on plugins.qgis.org stored as the repository secret `QGIS_PLUGIN_TOKEN`;
+without it the upload is skipped.
 
 ## Credits and licence
 
