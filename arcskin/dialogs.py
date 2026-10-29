@@ -40,8 +40,10 @@ TABLE_TOOLBAR = [
         ("mActionCopySelectedRows", "copy", tr("Copy")),
     ]),
 ]
-# QGIS's own footer buttons, replaced by TableFooter.
-QGIS_FOOTER = ("mFilterButton", "mAttributeViewButton", "mTableViewButton")
+# QGIS's own footer buttons, replaced by TableFooter. The table / form
+# view switch stays: Pro has no form view, but without the switch a table
+# shown as a form could not go back.
+QGIS_FOOTER = ("mFilterButton",)
 
 
 class TableFooter(QWidget):
