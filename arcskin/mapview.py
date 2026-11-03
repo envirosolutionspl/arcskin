@@ -295,8 +295,10 @@ class ScaleBox(QComboBox):
         self.locale = QLocale(QLocale().name())
         for scale in self.SCALES:
             self.addItem(self.text(scale), scale)
-        self.activated.connect(
-            lambda i: canvas.zoomScale(self.itemData(i)))
+        # A typed scale is applied by apply_text, not added to the list
+        # (as an entry without a scale, activated with None: issue #5).
+        self.setInsertPolicy(QComboBox.InsertPolicy.NoInsert)
+        self.activated.connect(self.apply_item)
         self.lineEdit().returnPressed.connect(self.apply_text)
         canvas.scaleChanged.connect(self.show_scale)
         self.show_scale(canvas.scale())
@@ -308,6 +310,14 @@ class ScaleBox(QComboBox):
     def show_scale(self, scale):
         """Follow the canvas."""
         self.setEditText(self.text(scale))
+
+    def apply_item(self, index):
+        """Zoom to a scale picked from the list."""
+        scale = self.itemData(index)
+        if scale is None:
+            self.apply_text()
+        else:
+            self.canvas.zoomScale(scale)
 
     def apply_text(self):
         """Zoom to the scale typed in, whatever its punctuation."""
