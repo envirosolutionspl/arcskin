@@ -689,15 +689,29 @@ def _lower_message_bar(bar, grid, height, changes):
         # addWidget with those crashed QGIS (access violation).
         return
     row, column, rows, columns = grid.getItemPosition(index)
-    grid.removeWidget(bar)
-    grid.addWidget(bar, 1, column, Qt.AlignmentFlag.AlignTop)
+    _move_in_grid(grid, bar, 1, column, Qt.AlignmentFlag.AlignTop)
     grid.setRowMinimumHeight(0, height - grid.verticalSpacing())
     grid.setRowStretch(1, 1)
 
     def restore():
         grid.setRowStretch(1, 0)
         grid.setRowMinimumHeight(0, 0)
-        grid.removeWidget(bar)
-        grid.addWidget(bar, row, column, rows, columns)
+        _move_in_grid(grid, bar, row, column, rows, columns)
 
     changes.add(restore)
+
+
+def _move_in_grid(grid, widget, *position):
+    """Move a QGIS-owned widget to another cell of ``grid``.
+
+    PyQt's removeWidget() hands ownership of the widget to its Python
+    wrapper and addWidget() does not take it back. Once the wrapper was
+    garbage collected (the undo step dropped after switching the look
+    off), the widget itself was deleted: for the message bar this left
+    iface.messageBar() dangling and QGIS crashed on its next use, e.g.
+    when the look was switched on again. Give ownership back to C++, so
+    the widget stays owned by its parent widget as before.
+    """
+    grid.removeWidget(widget)
+    grid.addWidget(widget, *position)
+    sip.transferto(widget, None)
