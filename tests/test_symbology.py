@@ -3,8 +3,8 @@
 import unittest
 
 from qgis.core import (
-    Qgis, QgsFillSymbol, QgsLineSymbol, QgsMarkerSymbol,
-    QgsSingleSymbolRenderer, QgsVectorLayer,
+    Qgis, QgsFillSymbol, QgsFontUtils, QgsLineSymbol, QgsMarkerSymbol,
+    QgsSingleSymbolRenderer, QgsTextFormat, QgsVectorLayer,
 )
 
 from arcskin import symbology
@@ -62,7 +62,11 @@ class TextFormat(unittest.TestCase):
 
     def test_pro_label_font(self):
         text = symbology.pro_text_format()
-        self.assertEqual(text.font().family(), "Tahoma")
+        if QgsFontUtils.fontFamilyOnSystem("Tahoma"):
+            self.assertEqual(text.font().family(), "Tahoma")
+        else:  # Linux: no missing font stored in the project
+            self.assertEqual(text.font().family(),
+                             QgsTextFormat().font().family())
         self.assertEqual(text.size(), 10)
         self.assertEqual(text.sizeUnit(), Qgis.RenderUnit.Points)
         self.assertEqual(text.color().name(), "#000000")

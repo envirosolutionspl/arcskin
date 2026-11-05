@@ -8,7 +8,8 @@
   polygons with a 0.7 pt grey outline, 1 pt lines, 4 pt circle markers.
 * Selected features are cyan on the map, Pro's default selection color
   (the attribute table uses the same cyan).
-* New labels use Pro's default text symbol: Tahoma 10 pt, black.
+* New labels use Pro's default text symbol: Tahoma 10 pt, black (QGIS's
+  font where Tahoma is not installed, as on most Linux systems).
 * Pro-like color ramps (resources/color_ramps.json) are added to the QGIS
   style, tagged "ArcSkin", for classifying vector layers and stretching
   rasters.
@@ -21,8 +22,8 @@ from qgis.core import (
     Qgis, QgsApplication, QgsColorScheme, QgsFillSymbol, QgsGradientColorRamp,
     QgsGradientStop, QgsLimitedRandomColorRamp, QgsLineSymbol,
     QgsMarkerSymbol, QgsPresetSchemeColorRamp, QgsProject,
-    QgsSingleSymbolRenderer, QgsStyle, QgsSymbol, QgsTextFormat,
-    QgsVectorLayer,
+    QgsFontUtils, QgsSingleSymbolRenderer, QgsStyle, QgsSymbol,
+    QgsTextFormat, QgsVectorLayer,
 )
 from qgis.PyQt.QtCore import QTimer
 from qgis.PyQt.QtGui import QColor, QFont
@@ -114,7 +115,9 @@ def pro_ramps():
 def pro_text_format():
     """Pro's default label text symbol: Tahoma 10 pt, black."""
     text = QgsTextFormat()
-    text.setFont(QFont("Tahoma"))
+    # Linux has no Tahoma: keep QGIS's font rather than store a missing one.
+    if QgsFontUtils.fontFamilyOnSystem("Tahoma"):
+        text.setFont(QFont("Tahoma"))
     text.setSize(10)
     text.setSizeUnit(Qgis.RenderUnit.Points)
     text.setColor(QColor(0, 0, 0))
