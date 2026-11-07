@@ -92,13 +92,14 @@ last record, "N of M selected", filters, zoom slider, refresh).
 
 **Symbology and styling**
 
-- New layers get Pro's defaults: pastel colours from Pro's "Basic Random" palette,
-  0.7 pt grey outlines, 1 pt lines, 4 pt circle markers.
-- New labels use Pro's default text symbol (Tahoma 10 pt, black).
-- About 100 of Pro's colour ramps (sequential, diverging, analytical such as
-  elevation, slope, aspect and precipitation, spectrum and qualitative) are added
-  to the QGIS style with the tag *ArcSkin*, for classifying vectors and
-  stretching rasters.
+- New layers get light defaults: pastel colours, 0.7 pt grey outlines, 1 pt
+  lines, 4 pt circle markers.
+- New labels use Tahoma 10 pt, black (QGIS's font where Tahoma is not
+  installed).
+- About 100 colour ramps (sequential, diverging, thematic such as relief, depth,
+  slope, aspect and rainfall, spectral and qualitative) are added to the QGIS
+  style with the tag *ArcSkin*, for classifying vectors and stretching rasters.
+  Ramps of an earlier version are replaced.
 
 ![Symbology pane](docs/images/symbology.png)
 

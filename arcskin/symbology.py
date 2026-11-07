@@ -1,7 +1,7 @@
 """Pro-like default symbology for new vector layers.
 
-* New layer colors come from a pastel "Basic Random"-like palette (the tones
-  of the Pro color picker), through QGIS's random style color scheme.
+* New layer colors come from a pastel palette, through QGIS's random style
+  color scheme.
 * The same palette is the project's default color ramp, used e.g. for
   categorized (unique values) renderers.
 * A layer added with QGIS's default single symbol gets Pro's defaults:
@@ -10,7 +10,7 @@
   (the attribute table uses the same cyan).
 * New labels use Pro's default text symbol: Tahoma 10 pt, black (QGIS's
   font where Tahoma is not installed, as on most Linux systems).
-* Pro-like color ramps (resources/color_ramps.json) are added to the QGIS
+* About 100 color ramps (resources/color_ramps.json) are added to the QGIS
   style, tagged "ArcSkin", for classifying vector layers and stretching
   rasters.
 """
@@ -28,12 +28,12 @@ from qgis.core import (
 from qgis.PyQt.QtCore import QTimer
 from qgis.PyQt.QtGui import QColor, QFont
 
-RAMP_NAME = "ArcSkin Basic Random"
+RAMP_NAME = "ArcSkin Pastel"
 RAMPS = Path(__file__).resolve().parent / "resources" / "color_ramps.json"
 TAG = "ArcSkin"
-PALETTE = ["#FFBEE8", "#FFBEBE", "#FFD37F", "#89CD66", "#C29ED7", "#D3FFBE",
-           "#FFFFBE", "#BEE8FF", "#D7C29E", "#BED2FF", "#FFEBBE", "#BEFFE8",
-           "#E8BEFF", "#A3FF73", "#73DFFF", "#FF7F7F", "#CDAA66", "#E1E1E1"]
+PALETTE = ["#FFBFE7", "#FDBCBD", "#FED180", "#88CC64", "#C49FD8", "#D5FEBD",
+           "#FEFFBF", "#BCE9FF", "#D5C49F", "#C0D3FF", "#FEEDBF", "#BDFDE7",
+           "#E7BDFE", "#A1FE71", "#75E0FD", "#FE8181", "#CEA864", "#DFE2DF"]
 OUTLINE = "110,110,110,255"
 SELECTION = QColor(0, 255, 255)
 # Symbol properties QGIS draws at random for a new layer.
@@ -95,7 +95,7 @@ def pro_symbol(layer):
 
 
 def pro_ramps():
-    """(name, QGIS color ramp) of each of Pro's color ramps."""
+    """(name, QGIS color ramp) of each bundled color ramp."""
     for item in json.loads(RAMPS.read_text(encoding="utf-8")):
         if "stops" in item:
             stops = [QgsGradientStop(p, QColor(c)) for p, c in item["stops"]]
@@ -159,6 +159,9 @@ class ProSymbology:
                 style.addColorRamp(name, ramp, True)
             if name not in tagged:
                 style.tagSymbol(entity, name, [TAG])
+        # Ramps an older version added under names no longer used.
+        for name in tagged - {name for name, _ in ramps}:
+            style.removeColorRamp(name)
         project = QgsProject.instance()
         settings = project.styleSettings()
         previous_ramp = settings.defaultColorRamp()
