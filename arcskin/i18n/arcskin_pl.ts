@@ -4,14 +4,6 @@
   <context>
     <name>ArcSkin</name>
     <message>
-      <source>Imagery</source>
-      <translation>Zobrazowania</translation>
-    </message>
-    <message>
-      <source>Streets</source>
-      <translation>Ulice</translation>
-    </message>
-    <message>
       <source>Topographic</source>
       <translation>Topograficzna</translation>
     </message>
@@ -24,24 +16,12 @@
       <translation>Teren</translation>
     </message>
     <message>
-      <source>Hillshade</source>
-      <translation>Cieniowanie rzeźby</translation>
+      <source>Light</source>
+      <translation>Jasna</translation>
     </message>
     <message>
-      <source>Oceans</source>
-      <translation>Oceany</translation>
-    </message>
-    <message>
-      <source>National Geographic Style</source>
-      <translation>Styl National Geographic</translation>
-    </message>
-    <message>
-      <source>Light Gray Canvas</source>
-      <translation>Jasnoszara</translation>
-    </message>
-    <message>
-      <source>Dark Gray Canvas</source>
-      <translation>Ciemnoszara</translation>
+      <source>Dark</source>
+      <translation>Ciemna</translation>
     </message>
     <message>
       <source>None</source>

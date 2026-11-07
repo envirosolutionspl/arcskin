@@ -585,10 +585,8 @@ class MapFooter(QWidget):
 class MapAttribution(QWidget):
     """Credits strip along the bottom of the map, like Pro's attribution.
 
-    Left: the usage rights (layer metadata) of the layers drawn, elided to
-    one line, all of it in the tooltip. Right: "Powered by Esri" while an
-    Esri service is drawn, as Esri's terms ask. Hidden when nothing drawn
-    has credits.
+    The usage rights (layer metadata) of the layers drawn, elided to one
+    line, all of it in the tooltip. Hidden when nothing drawn has credits.
     """
 
     def __init__(self, canvas):
@@ -596,11 +594,9 @@ class MapAttribution(QWidget):
         self.canvas = canvas
         self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground)
         self.credits = QLabel()
-        self.esri = QLabel("Powered by Esri")  # Esri's wording, untranslated
         row = QHBoxLayout(self)
         row.setContentsMargins(4, 0, 4, 0)
         row.addWidget(self.credits, 1)
-        row.addWidget(self.esri)
         self.text = ""
         canvas.layersChanged.connect(self.refresh)
         # The canvas drops a removed layer without emitting layersChanged.
@@ -615,16 +611,14 @@ class MapAttribution(QWidget):
 
     def refresh(self, *_):
         """Collect the credits of the layers the map draws now."""
-        credits, esri = [], False
+        credits = []
         for layer in self.canvas.layers():
             for text in layer.metadata().rights():
                 if text and text not in credits:
                     credits.append(text)
-            esri |= "arcgisonline.com" in layer.source()
         self.text = " | ".join(credits)
         self.credits.setToolTip(self.text)
-        self.esri.setVisible(esri)
-        self.setVisible(bool(credits) or esri)
+        self.setVisible(bool(credits))
         self.place()
 
     def place(self):
@@ -632,8 +626,7 @@ class MapAttribution(QWidget):
         height = self.sizeHint().height()
         self.setGeometry(0, self.canvas.height() - height,
                          self.canvas.width(), height)
-        room = self.canvas.width() - 12 - (
-            0 if self.esri.isHidden() else self.esri.sizeHint().width() + 8)
+        room = self.canvas.width() - 12
         self.credits.setText(self.credits.fontMetrics().elidedText(
             self.text, Qt.TextElideMode.ElideRight, max(room, 0)))
 

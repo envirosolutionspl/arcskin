@@ -43,10 +43,9 @@ training rooms that teach both, and for organisations moving from Esri to QGIS.
   settings, the complete QGIS menu and the ArcSkin switch.
 - Title row with a Quick Access Toolbar, the project name and QGIS's search box
   centred at the top (like Pro's Command Search).
-- Basemap gallery: Imagery, Streets, Terrain, Hillshade, Oceans, National
-  Geographic Style, Light and Dark Gray Canvas (Esri), Sentinel-2 Cloudless
-  (EOX), Topographic (OpenTopoMap), OpenStreetMap and Humanitarian (HOT). Only
-  worldwide services that need no API key.
+- Basemap gallery: Sentinel-2 Cloudless and Terrain (EOX), Topographic
+  (OpenTopoMap), OpenStreetMap, Humanitarian (HOT), Light and Dark (OpenFreeMap
+  vector tiles). Only open, worldwide services that need no API key.
 
 **Panes**
 
@@ -73,8 +72,8 @@ training rooms that teach both, and for organisations moving from Esri to QGIS.
   (click to zoom to them), clear selection, pause drawing and refresh.
 - Attribution strip along the bottom of the map, as in Pro: the credits of the
   layers drawn (the *Rights* in each layer's metadata, filled in for gallery
-  basemaps) and "Powered by Esri" while an Esri basemap is shown. Hover it to
-  read credits cut short. In a print layout, add a label with the expression
+  basemaps). Hover it to read credits cut short. In a print layout, add a label
+  with the expression
   `[% array_to_string(map_credits('Map 1'), ' | ') %]` (use your map item's
   ID): it collects the same credits for the layers in that map.
 - Selected features in Pro's cyan, on the map and in the attribute table.
@@ -255,5 +254,6 @@ name `QGIS_PLUGIN_TOKEN`; without it the upload is skipped.
 ArcSkin is licensed under the GPL-2.0-or-later, see [LICENSE](LICENSE). The icon
 theme is derived from QGIS's own icons (GPL-2.0-or-later). Demo data: Natural
 Earth (public domain). Basemaps: © OpenStreetMap contributors, OpenTopoMap
-(CC-BY-SA), Humanitarian OpenStreetMap Team / OpenStreetMap France, Esri and
-its data partners, Sentinel-2 cloudless by EOX IT Services GmbH (CC BY 4.0).
+(CC-BY-SA), Humanitarian OpenStreetMap Team / OpenStreetMap France, OpenFreeMap
+and OpenMapTiles, Terrain Light and Sentinel-2 cloudless by EOX IT Services
+GmbH (Sentinel-2 cloudless 2016: CC BY 4.0).
