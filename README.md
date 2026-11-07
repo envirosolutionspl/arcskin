@@ -7,13 +7,14 @@
 [![Release](https://img.shields.io/github/v/release/envirosolutionspl/arcskin)](https://github.com/envirosolutionspl/arcskin/releases/latest)
 [![plugins.qgis.org](https://img.shields.io/badge/plugins.qgis.org-arcskin-589632?logo=qgis&logoColor=white)](https://plugins.qgis.org/plugins/arcskin/)
 
-**ArcSkin gives QGIS an interface inspired by ArcGIS Pro**: a ribbon, Pro-style
-panes, view tabs above the map, Pro's map status bar, light flat icons for the whole
-of QGIS, Pro's default symbology and colour ramps. Everything is switched on with one
-click and fully reverted with the next one.
+**ArcSkin gives QGIS a ribbon interface**: a ribbon built from QGIS's own tools,
+reorganised panes, view tabs above the map, a map status bar, light flat icons for
+the whole of QGIS, default symbology and colour ramps. Everything is switched on
+with one click and fully reverted with the next one.
 
-It is meant for people who know ArcGIS Pro and want to feel at home in QGIS, for
-training rooms that teach both, and for organisations moving from Esri to QGIS.
+It is meant for people who move to QGIS from other desktop GIS software with a
+ribbon interface, such as ArcGIS Pro, for training rooms and for organisations
+moving to QGIS.
 
 ![ArcSkin demo project: ribbon, Contents, view tabs, Catalog and the map status bar](docs/images/overview.png)
 
@@ -25,7 +26,7 @@ training rooms that teach both, and for organisations moving from Esri to QGIS.
 **Ribbon and title row**
 
 - Ribbon with *Map*, *Insert*, *Analysis*, *View*, *Edit*, *Share*, *Help* and
-  *Add-ins* tabs built from QGIS's own tools, with Pro's captions and grouping.
+  *Add-ins* tabs built from QGIS's own tools, grouped by task.
   Plugin toolbars appear on *Add-ins*.
 - Nothing of QGIS is out of reach: buttons drop down QGIS's own menus
   (*Analysis → Tools*: Vector, Raster, Database, Web, Mesh; *View → Panes* with
@@ -42,19 +43,19 @@ training rooms that teach both, and for organisations moving from Esri to QGIS.
 - Blue *Project* button with project commands, recent projects, import/export,
   settings, the complete QGIS menu and the ArcSkin switch.
 - Title row with a Quick Access Toolbar, the project name and QGIS's search box
-  centred at the top (like Pro's Command Search).
+  centred at the top.
 - Basemap gallery: Sentinel-2 Cloudless and Terrain (EOX), Topographic
   (OpenTopoMap), OpenStreetMap, Humanitarian (HOT), Light and Dark (OpenFreeMap
   vector tiles). Only open, worldwide services that need no API key.
 
 **Panes**
 
-- *Contents* with a layer search box and filter, Pro's *List By* views (drawing
-  order, data source, selection, editing, snapping, labeling) and Pro-style
+- *Contents* with a layer search box and filter, *List By* views (drawing
+  order, data source, selection, editing, snapping, labeling) and compact
   raster legends ("Value", *High* / *Low*).
 - *Catalog* with *Project*, *Favorites* and *All* tabs, *Geoprocessing* with
-  toolboxes and *Find Tools*, *Symbology* with Pro page icons.
-- The active pane gets Pro's blue title and frame; *View → Reset Panes* restores
+  toolboxes and *Find Tools*, *Symbology* with redrawn page icons.
+- The active pane gets a blue title and frame; *View → Reset Panes* restores
   the mapping, editing or geoprocessing layout.
 
 ![Geoprocessing pane](docs/images/geoprocessing.png)
@@ -66,17 +67,17 @@ training rooms that teach both, and for organisations moving from Esri to QGIS.
 - View tabs above the map. Extra 2D map views are shown in the main map area, one
   at a time: each tab has its own map theme and extent, and the *Contents* pane
   edits the layers of the tab you are on. 3D views and print layouts get tabs too.
-- Pro's status bar under the map: editable scale, snapping / grid / constraints,
+- Status bar under the map: editable scale, snapping / grid / constraints,
   coordinates you can type in (decimal degrees, DMS, DDM, MGRS, US National Grid,
   UTM and linear units), the coordinate system, the number of selected features
   (click to zoom to them), clear selection, pause drawing and refresh.
-- Attribution strip along the bottom of the map, as in Pro: the credits of the
+- Attribution strip along the bottom of the map: the credits of the
   layers drawn (the *Rights* in each layer's metadata, filled in for gallery
   basemaps). Hover it to read credits cut short. In a print layout, add a label
   with the expression
   `[% array_to_string(map_credits('Map 1'), ' | ') %]` (use your map item's
   ID): it collects the same credits for the layers in that map.
-- Selected features in Pro's cyan, on the map and in the attribute table.
+- Selected features in cyan, on the map and in the attribute table.
 
 ![Selected features in cyan, with the count in the status bar](docs/images/selection.png)
 
@@ -84,11 +85,11 @@ training rooms that teach both, and for organisations moving from Esri to QGIS.
 
 **Attribute table**
 
-Pro's toolbar (*Field: Add, Calculate | Selection: Select By Attributes, Zoom To,
+A grouped toolbar (*Field: Add, Calculate | Selection: Select By Attributes, Zoom To,
 Switch, Clear, Delete, Copy*) and footer (show all or selected records, first and
 last record, "N of M selected", filters, zoom slider, refresh).
 
-![Attribute table with Pro's toolbar and footer](docs/images/attribute_table.png)
+![Attribute table with the grouped toolbar and footer](docs/images/attribute_table.png)
 
 **Symbology and styling**
 
@@ -105,9 +106,9 @@ last record, "N of M selected", filters, zoom slider, refresh).
 
 **Look and feel**
 
-- Light, flat theme with Segoe UI and Pro-style check boxes, radio buttons, lists
+- Light, flat theme with Segoe UI and flat check boxes, radio buttons, lists
   and trees.
-- Every QGIS icon redrawn in Pro's light, flat style, plus hand-drawn icons for
+- Every QGIS icon redrawn in a light, flat style, plus hand-drawn icons for
   tools and layer types.
 - English interface, Polish translation.
 
@@ -177,13 +178,13 @@ coast*) and a print layout. The data come from Natural Earth (public domain).
 arcskin/                      the plugin (packed into the ZIP)
   plugin.py                   on / off switch, progress box
   stylesheet.py               the skin's block in the application style sheet
-  util.py                     tr(), Pro icons, undo log of all changes (Changes)
+  util.py                     tr(), bundled icons, undo log of all changes (Changes)
   ribbon.py                   ribbon, title row, Project menu
   panes.py                    Contents, Catalog, Geoprocessing, Symbology panes
   contents_views.py           List By views, raster legend, context menu icons
   mapview.py                  view tabs, map status bar
   coords.py                   coordinate formats of the status bar
-  dialogs.py                  attribute table, Pro icons in other windows
+  dialogs.py                  attribute table, bundled icons in other windows
   symbology.py                default symbols, label font, colour ramps
   icon_theme.py               QGIS icon theme
   basemaps.py                 basemap gallery
