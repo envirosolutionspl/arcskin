@@ -31,6 +31,9 @@ VARIABLE_RE = re.compile(r"^\s*@([\w-]+)\s*:\s*(.+?)\s*;\s*$", re.MULTILINE)
 # Window layout before the skin, kept in settings so that disabling the
 # skin after a QGIS restart still brings the original toolbars back.
 STATE_KEY = "arcskin/original_window_state"
+# The user's own on/off choice. Written only on a click, so unloading for
+# an update, the plugin manager or QGIS quitting never change it.
+ENABLED_KEY = "arcskin/enabled"
 
 
 def load_qss(theme: str) -> str:
@@ -65,10 +68,14 @@ class ArcSkinPlugin:
             icon, tr("ArcSkin look"), self.iface.mainWindow(), checkable=True
         )
         self.action.toggled.connect(self.set_enabled)
+        self.action.triggered.connect(
+            lambda on: QgsSettings().setValue(ENABLED_KEY, on))
         self.iface.addPluginToMenu(MENU_NAME, self.action)
-        # The skin is on whenever the plugin is loaded. At QGIS start-up
-        # wait until all plugins are loaded so their toolbars reach the
-        # ribbon's Add-ins tab.
+        # The skin goes on when loaded, unless the user switched it off.
+        # At QGIS start-up wait until all plugins are loaded so their
+        # toolbars reach the ribbon's Add-ins tab.
+        if not QgsSettings().value(ENABLED_KEY, True, type=bool):
+            return
         if self.iface.mainWindow().isVisible():
             self.action.setChecked(True)
         else:
