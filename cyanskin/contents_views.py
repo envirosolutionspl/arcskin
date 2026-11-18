@@ -57,11 +57,11 @@ class ContentsViews(QWidget):
     """Row of List By buttons switching the Contents pane's view."""
 
     def __init__(self, iface, layer_tree_view, parent_layout):
-        super().__init__(objectName="ArcSkinContentsViews")
+        super().__init__(objectName="CyanSkinContentsViews")
         self.iface = iface
         self.layer_tree_view = layer_tree_view
         self.view = "drawing_order"
-        self.tree = QTreeWidget(objectName="ArcSkinContentsList",
+        self.tree = QTreeWidget(objectName="CyanSkinContentsList",
                                 headerHidden=True)
         self.tree.hide()
         self.tree.itemChanged.connect(self._toggled)
@@ -94,16 +94,16 @@ class ContentsViews(QWidget):
 
     def _header(self):
         """View heading and the map row, like the top of Pro's Contents."""
-        header = QWidget(objectName="ArcSkinContentsHeader")
+        header = QWidget(objectName="CyanSkinContentsHeader")
         box = QVBoxLayout(header)
         box.setContentsMargins(8, 6, 4, 2)
         box.setSpacing(4)
         self.heading = QLabel(VIEWS[self.view][2],
-                              objectName="ArcSkinContentsHeading")
+                              objectName="CyanSkinContentsHeading")
         map_row = QHBoxLayout()
         map_icon = QLabel()
         map_icon.setPixmap(pro_icon("new_map").pixmap(16, 16))
-        self.map_name = QLabel(objectName="ArcSkinContentsMap")
+        self.map_name = QLabel(objectName="CyanSkinContentsMap")
         map_row.addWidget(map_icon)
         map_row.addWidget(self.map_name, 1)
         box.addWidget(self.heading)

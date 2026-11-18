@@ -13,21 +13,21 @@ class Translations(unittest.TestCase):
 
     def test_ts_files_list_exactly_the_strings_in_the_code(self):
         sources = set(i18n.source_strings())
-        for path in i18n.I18N.glob("arcskin_*.ts"):
+        for path in i18n.I18N.glob("cyanskin_*.ts"):
             with self.subTest(file=path.name):
                 self.assertEqual(set(i18n.read_ts(path)), sources)
 
     def test_polish_is_complete_and_keeps_the_placeholders(self):
-        entries = i18n.read_ts(i18n.I18N / "arcskin_pl.ts")
+        entries = i18n.read_ts(i18n.I18N / "cyanskin_pl.ts")
         self.assertEqual([s for s, t in entries.items() if not t], [])
         for source, translation in entries.items():
             self.assertEqual(source.count("{}"), translation.count("{}"),
                              source)
 
     def test_compiled_qm_translates(self):
-        entries = i18n.read_ts(i18n.I18N / "arcskin_pl.ts")
+        entries = i18n.read_ts(i18n.I18N / "cyanskin_pl.ts")
         with tempfile.TemporaryDirectory() as folder:
-            path = Path(folder) / "arcskin_pl.qm"
+            path = Path(folder) / "cyanskin_pl.qm"
             i18n.write_qm(path, entries)
             translator = QTranslator()
             self.assertTrue(translator.load(str(path)))

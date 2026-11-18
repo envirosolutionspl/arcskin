@@ -358,7 +358,7 @@ def _button(iface, changes, names, size, icon, caption):
 
 def _group(caption, buttons):
     """Ribbon group: large buttons, small ones stacked by three."""
-    group = QWidget(objectName="ArcSkinRibbonGroup")
+    group = QWidget(objectName="CyanSkinRibbonGroup")
     row = QHBoxLayout()
     row.setSpacing(2)
     column = None
@@ -373,7 +373,7 @@ def _group(caption, buttons):
             column.setAlignment(Qt.AlignmentFlag.AlignTop)
             row.addLayout(column)
         column.addWidget(button)
-    label = QLabel(caption, objectName="ArcSkinRibbonCaption")
+    label = QLabel(caption, objectName="CyanSkinRibbonCaption")
     label.setAlignment(Qt.AlignmentFlag.AlignCenter)
     box = QVBoxLayout(group)
     box.setContentsMargins(4, 2, 4, 0)
@@ -394,11 +394,11 @@ def _tab(groups):
     row.setSpacing(0)
     for caption, buttons in groups:
         row.addWidget(_group(caption, buttons))
-        line = QFrame(objectName="ArcSkinRibbonSeparator")
+        line = QFrame(objectName="CyanSkinRibbonSeparator")
         line.setFrameShape(QFrame.Shape.VLine)
         row.addWidget(line)
     row.addStretch()
-    scroll = QScrollArea(objectName="ArcSkinRibbonPage",
+    scroll = QScrollArea(objectName="CyanSkinRibbonPage",
                          widgetResizable=True)
     scroll.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
     scroll.setWidget(page)
@@ -429,7 +429,7 @@ def _addin_groups(bars):
 
 def _project_button(changes, win, toggle_action):
     """Blue "Project" tab: project actions plus the hidden QGIS menu bar."""
-    button = QToolButton(objectName="ArcSkinProjectButton", text=tr("Project"))
+    button = QToolButton(objectName="CyanSkinProjectButton", text=tr("Project"))
     menu = QMenu(button)
     for name, icon in PROJECT_MENU:
         if name.startswith("menu:"):
@@ -474,7 +474,7 @@ class TitleRow(QWidget):
     messages on the right."""
 
     def __init__(self, iface, changes):
-        super().__init__(objectName="ArcSkinTitleRow")
+        super().__init__(objectName="CyanSkinTitleRow")
         win = iface.mainWindow()
         row = QHBoxLayout(self)
         row.setContentsMargins(6, 2, 6, 2)
@@ -487,7 +487,7 @@ class TitleRow(QWidget):
                 button.setToolButtonStyle(
                     Qt.ToolButtonStyle.ToolButtonIconOnly)
                 row.addWidget(button)
-        self.project = QLabel(objectName="ArcSkinProjectName")
+        self.project = QLabel(objectName="CyanSkinProjectName")
         row.addWidget(self.project)
         row.addStretch(1)
         self.locator = win.statusBar().findChild(QWidget, "LocatorWidget")
@@ -527,7 +527,7 @@ def build_ribbon(iface, changes, toggle_action):
     for bar in bars:
         bar.hide()
     changes.set(win.menuBar(), "visible", False)
-    tabs = QTabWidget(objectName="ArcSkinRibbon")
+    tabs = QTabWidget(objectName="CyanSkinRibbon")
     tabs.setCornerWidget(_project_button(changes, win, toggle_action),
                          Qt.Corner.TopLeftCorner)
     for title, groups in RIBBON + [(tr("Add-ins"), None)]:
@@ -542,7 +542,7 @@ def build_ribbon(iface, changes, toggle_action):
                     built.append((caption, buttons))
         if built:
             tabs.addTab(_tab(built), title)
-    ribbon = QToolBar("ArcSkin", win, objectName="ArcSkinRibbonBar")
+    ribbon = QToolBar("CyanSkin", win, objectName="CyanSkinRibbonBar")
     ribbon.setMovable(False)
     ribbon.setFloatable(False)
     frame = QWidget()

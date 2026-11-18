@@ -20,7 +20,7 @@ jobs:
 
       - name: Check tag matches metadata.txt version
         run: |
-          VERSION=$(grep -E '^version=' arcskin/metadata.txt | cut -d= -f2)
+          VERSION=$(grep -E '^version=' cyanskin/metadata.txt | cut -d= -f2)
           if [ "v${VERSION}" != "${GITHUB_REF_NAME}" ]; then
             echo "Tag ${GITHUB_REF_NAME} does not match metadata version ${VERSION}"
             exit 1
@@ -45,12 +45,12 @@ jobs:
             echo "::notice::QGIS_PLUGIN_TOKEN secret not set, upload skipped"
             exit 0
           fi
-          VERSION=$(grep -E '^version=' arcskin/metadata.txt | cut -d= -f2)
+          VERSION=$(grep -E '^version=' cyanskin/metadata.txt | cut -d= -f2)
           STATUS=$(curl -sS -o response.html -w "%{http_code}" \
             -H "Authorization: Bearer ${QGIS_PLUGIN_TOKEN}" \
-            -A "arcskin-release (GitHub Actions)" \
-            -F "package=@dist/arcskin-${VERSION}.zip" \
-            "https://plugins.qgis.org/plugins/api/arcskin/version/add/")
+            -A "cyanskin-release (GitHub Actions)" \
+            -F "package=@dist/cyanskin-${VERSION}.zip" \
+            "https://plugins.qgis.org/plugins/api/cyanskin/version/add/")
           # Success is 201 Created; a rejected package comes back as the
           # form (200) with the errors, a bad token as 403.
           if [ "$STATUS" != "201" ]; then

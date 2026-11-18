@@ -4,7 +4,7 @@ import unittest
 
 from qgis.PyQt.QtWidgets import QApplication, QMainWindow
 
-from arcskin.stylesheet import (
+from cyanskin.stylesheet import (
     MARK_BEGIN, MARK_END, StyleSheetBlock, has_block, with_block,
     without_block,
 )

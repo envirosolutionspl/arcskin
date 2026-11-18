@@ -4,7 +4,7 @@ import unittest
 
 from qgis.core import QgsVectorTileBasicRendererStyle
 
-from arcskin import basemaps
+from cyanskin import basemaps
 
 
 class Services(unittest.TestCase):

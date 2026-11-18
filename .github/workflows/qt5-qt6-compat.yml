@@ -19,13 +19,13 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Generate readable report (dry run)
-        run: /usr/local/bin/pyqt5_to_pyqt6.py --dry_run --logfile "$GITHUB_WORKSPACE/qt5_qt6_report.log" arcskin
+        run: /usr/local/bin/pyqt5_to_pyqt6.py --dry_run --logfile "$GITHUB_WORKSPACE/qt5_qt6_report.log" cyanskin
 
       - name: Show report in the run summary
         run: tail -n +2 "$GITHUB_WORKSPACE/qt5_qt6_report.log" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Real job status
-        run: /usr/local/bin/pyqt5_to_pyqt6.py arcskin
+        run: /usr/local/bin/pyqt5_to_pyqt6.py cyanskin
 
       - name: Upload report on failure
         if: failure()

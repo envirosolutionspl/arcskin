@@ -12,7 +12,7 @@ ICON_DIR = Path(__file__).resolve().parent / "resources" / "icons" / "pro"
 
 def tr(text):
     """Translate ``text`` (English) with the plugin's translator."""
-    return QCoreApplication.translate("ArcSkin", text)
+    return QCoreApplication.translate("CyanSkin", text)
 
 
 def pro_icon(name):
@@ -29,7 +29,7 @@ def tool_button(icon, tip, checkable=False):
 
 def separator():
     """Thin vertical line between groups of footer buttons."""
-    line = QFrame(objectName="ArcSkinFooterSeparator")
+    line = QFrame(objectName="CyanSkinFooterSeparator")
     line.setFrameShape(QFrame.Shape.VLine)
     return line
 

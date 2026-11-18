@@ -5,7 +5,7 @@ import re
 import unittest
 
 import package
-from arcskin.plugin import PLUGIN_DIR
+from cyanskin.plugin import PLUGIN_DIR
 
 REQUIRED = ("name", "qgisMinimumVersion", "description", "about", "version",
             "author", "email", "repository")

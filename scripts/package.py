@@ -1,4 +1,4 @@
-"""Build an installable plugin ZIP: dist/arcskin-<version>.zip.
+"""Build an installable plugin ZIP: dist/cyanskin-<version>.zip.
 
 Usage:  python scripts/package.py
 """
@@ -10,7 +10,7 @@ import zipfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-PLUGIN = "arcskin"
+PLUGIN = "cyanskin"
 
 
 def plugin_version() -> str:

@@ -7,7 +7,7 @@ from qgis.core import (
 )
 from qgis.PyQt.QtCore import QLocale
 
-from arcskin import coords
+from cyanskin import coords
 
 GEOGRAPHIC = QgsCoordinateReferenceSystem("EPSG:4326")
 WEB_MERCATOR = QgsCoordinateReferenceSystem("EPSG:3857")

@@ -6,8 +6,8 @@ from qgis.core import QgsVectorLayer
 from qgis.PyQt import sip
 from qgis.PyQt.QtWidgets import QDialog, QTableView, QWidget
 
-from arcskin.dialogs import TableFooter
-from arcskin.icon_theme import holders_in
+from cyanskin.dialogs import TableFooter
+from cyanskin.icon_theme import holders_in
 
 
 class Footer(unittest.TestCase):

@@ -1,4 +1,4 @@
-"""Generate arcskin/resources/qgis_theme: every QGIS icon in the Pro style.
+"""Generate cyanskin/resources/qgis_theme: every QGIS icon in the Pro style.
 
 Run with QGIS's Python (the icons live in QGIS's compiled Qt resources):
 
@@ -20,8 +20,8 @@ import shutil
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-ICONS = ROOT / "arcskin" / "resources" / "icons"
-OUT = ROOT / "arcskin" / "resources" / "qgis_theme"
+ICONS = ROOT / "cyanskin" / "resources" / "icons"
+OUT = ROOT / "cyanskin" / "resources" / "qgis_theme"
 SOURCE = ":/images/themes/default"
 
 # Colour family -> (light, mid, dark) Pro palette tones.
@@ -270,7 +270,7 @@ def main():
                 print("not a QGIS icon:", name)
             (icons / name).parent.mkdir(parents=True, exist_ok=True)
             shutil.copy(ICONS / "pro" / f"{key}.svg", icons / name)
-    (OUT / "style.qss").write_text("/* ArcSkin icon theme */\n")
+    (OUT / "style.qss").write_text("/* CyanSkin icon theme */\n")
     (OUT / "variables.qss").write_text("")
     print(f"{len(names)} QGIS icons restyled into {OUT}")
     app.exitQgis()

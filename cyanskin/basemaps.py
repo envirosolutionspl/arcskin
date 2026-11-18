@@ -19,7 +19,7 @@ from qgis.PyQt.QtWidgets import (
 
 from .util import pro_icon, tr
 
-MARKER = "arcskin/basemap"  # custom property of layers added here
+MARKER = "cyanskin/basemap"  # custom property of layers added here
 OPENFREEMAP = "https://tiles.openfreemap.org"
 OPENFREEMAP_CREDITS = ("OpenFreeMap © OpenMapTiles "
                        "Data from © OpenStreetMap contributors")
@@ -115,7 +115,7 @@ def set_basemap(iface, name, uri, attribution):
         layer = QgsRasterLayer(uri, name, "wms")
     if layer is None or not layer.isValid():
         iface.messageBar().pushWarning(
-            "ArcSkin", tr("Basemap “{}” is unavailable.").format(name)
+            "CyanSkin", tr("Basemap “{}” is unavailable.").format(name)
         )
         return
     layer.setCustomProperty(MARKER, True)

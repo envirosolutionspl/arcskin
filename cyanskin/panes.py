@@ -49,9 +49,9 @@ CATALOG_TABS = [(tr("Project"), "QgsProjectHomeItem"),
 
 class ActivePane(QObject):
     """Marks the pane holding the focus: Pro draws its title and frame blue
-    (style sheet rule ``QDockWidget[arcskinActive="true"]``)."""
+    (style sheet rule ``QDockWidget[cyanskinActive="true"]``)."""
 
-    PROPERTY = "arcskinActive"
+    PROPERTY = "cyanskinActive"
 
     def __init__(self, win, changes):
         super().__init__(win)
@@ -96,7 +96,7 @@ class ToolboxDelegate(QStyledItemDelegate):
 
 def _search_row(changes, dock, placeholder, on_text, filters=()):
     """Search box (with a filter drop-down) above the dock's toolbar."""
-    row = QWidget(objectName="ArcSkinPaneSearch")
+    row = QWidget(objectName="CyanSkinPaneSearch")
     layout = QHBoxLayout(row)
     layout.setContentsMargins(4, 4, 4, 2)
     layout.setSpacing(2)
@@ -178,7 +178,7 @@ def _dress_catalog(changes, dock):
     tree = dock.findChild(QgsBrowserTreeView)
     if tree is None:
         return
-    tabs = QTabBar(objectName="ArcSkinPaneTabs", drawBase=False,
+    tabs = QTabBar(objectName="CyanSkinPaneTabs", drawBase=False,
                    expanding=False)
     for title, _ in CATALOG_TABS:
         tabs.addTab(title)

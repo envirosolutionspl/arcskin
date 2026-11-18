@@ -28,18 +28,18 @@ from qgis.PyQt.QtWidgets import QAbstractButton, QApplication
 
 from .util import tr
 
-THEME = "ArcSkin"
+THEME = "CyanSkin"
 SOURCE = Path(__file__).resolve().parent / "resources" / "qgis_theme"
 THEME_KEY = "UI/UITheme"
 # UI theme before the skin; kept in settings so that disabling the skin
-# after a QGIS restart (when the theme is already ArcSkin) restores it.
-ORIGINAL_KEY = "arcskin/original_ui_theme"
+# after a QGIS restart (when the theme is already CyanSkin) restores it.
+ORIGINAL_KEY = "cyanskin/original_ui_theme"
 DEFAULT_ICONS = ":/images/themes/default"
 # Application property: the restart notice was handled in this QGIS session.
-NOTICE = "arcskinRestartNotice"
+NOTICE = "cyanskinRestartNotice"
 # File in the theme folder: plugin version and icon set ("pro" or "qgis")
 # the folder holds, so that ~1000 files are not written again needlessly.
-MARKER = "arcskin.version"
+MARKER = "cyanskin.version"
 
 
 # Cache key of each QGIS icon handed out -> its Pro theme file, while the
@@ -101,7 +101,7 @@ def _write(files):
         QgsMessageLog.logMessage(
             tr("{} icon files could not be written, e.g. {}").format(
                 len(failed), failed[0]),
-            "ArcSkin", Qgis.MessageLevel.Warning)
+            "CyanSkin", Qgis.MessageLevel.Warning)
     return not failed
 
 
@@ -198,6 +198,6 @@ def apply_icon_theme(iface, changes):
         app.setProperty(NOTICE, True)
         if previous_setting != THEME:
             iface.messageBar().pushMessage(
-                "ArcSkin", tr("Layer icons in Contents and Catalog change "
-                              "after restarting QGIS."),
+                "CyanSkin", tr("Layer icons in Contents and Catalog change "
+                               "after restarting QGIS."),
                 Qgis.MessageLevel.Info, 10)

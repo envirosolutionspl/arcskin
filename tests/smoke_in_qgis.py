@@ -1,4 +1,4 @@
-"""Smoke test to run inside QGIS with ArcSkin loaded.
+"""Smoke test to run inside QGIS with CyanSkin loaded.
 
 In the QGIS Python console (the look must be on):
 
@@ -17,7 +17,7 @@ from qgis.PyQt.QtWidgets import (
     QApplication, QTabBar, QToolBar, QToolButton, QWidget,
 )
 
-from arcskin.ribbon import ADDIN_HOSTS
+from cyanskin.ribbon import ADDIN_HOSTS
 
 # QGIS toolbars and tools the ribbon does not offer (yet).
 LATER_BARS = {"mLabelToolBar", "mRasterToolBar", "mAnnotationsToolBar",
@@ -49,7 +49,7 @@ def missing_from_ribbon(win):
     """Names of core QGIS toolbar actions that no ribbon button or drop-down
     reaches (the full QGIS menu of the Project button does not count)."""
     ribbon = next(bar for bar in win.findChildren(QToolBar,
-                                                  "ArcSkinRibbonBar")
+                                                  "CyanSkinRibbonBar")
                   if bar.isVisible())
     qgis_menus = {sip.unwrapinstance(a) for a in win.menuBar().actions()}
     reached, menus = set(), []
@@ -82,7 +82,7 @@ def missing_from_ribbon(win):
 
 def smoke_test(iface):
     """Failed checks of an off / on cycle (none when all is well)."""
-    plugin = qgis.utils.plugins["arcskin"]
+    plugin = qgis.utils.plugins["cyanskin"]
     win, canvas = iface.mainWindow(), iface.mapCanvas()
     failures = []
 
@@ -90,28 +90,28 @@ def smoke_test(iface):
         if not condition:
             failures.append(what)
 
-    def arcskin_widgets():
+    def cyanskin_widgets():
         return [w.objectName() for w in win.findChildren(QWidget)
-                if w.objectName().startswith("ArcSkin") and w.isVisible()]
+                if w.objectName().startswith("CyanSkin") and w.isVisible()]
 
     def ramps():
         return [name for name in QgsStyle.defaultStyle().colorRampNames()
-                if name.startswith("ArcSkin ")]
+                if name.startswith("CyanSkin ")]
 
     def qgis_toolbars():
         return [bar for bar in win.findChildren(QToolBar)
                 if bar.parent() is win and bar.actions()
-                and bar.objectName() != "ArcSkinRibbonBar"]
+                and bar.objectName() != "CyanSkinRibbonBar"]
 
     def skinned():
         # QGIS has a style sheet of its own (the UI theme's), so look
         # for a selector of the plugin's one.
-        return "#ArcSkinRibbon" in QApplication.instance().styleSheet()
+        return "#CyanSkinRibbon" in QApplication.instance().styleSheet()
 
     def ribbon_shown():
         # The old ribbon lingers hidden until Qt deletes it.
         return any(bar.isVisible() for bar in
-                   win.findChildren(QToolBar, "ArcSkinRibbonBar"))
+                   win.findChildren(QToolBar, "CyanSkinRibbonBar"))
 
     def switch(on):
         plugin.action.setChecked(on)
@@ -119,28 +119,28 @@ def smoke_test(iface):
 
     expect(plugin.action.isChecked(), "the look is on at the start")
     switch(False)
-    expect(not skinned(), "ArcSkin style sheet removed")
+    expect(not skinned(), "CyanSkin style sheet removed")
     expect(win.statusBar().isVisible(), "status bar back")
     expect(win.menuBar().isVisible(), "menu bar back")
     expect(any(bar.isVisible() for bar in qgis_toolbars()),
            "QGIS toolbars back")
-    expect(not arcskin_widgets(),
-           f"no ArcSkin widgets left: {arcskin_widgets()}")
-    expect(not ramps(), "ArcSkin colour ramps removed from the style")
-    expect(QgsSettings().value("UI/UITheme") != "ArcSkin",
+    expect(not cyanskin_widgets(),
+           f"no CyanSkin widgets left: {cyanskin_widgets()}")
+    expect(not ramps(), "CyanSkin colour ramps removed from the style")
+    expect(QgsSettings().value("UI/UITheme") != "CyanSkin",
            "UI theme setting restored")
     expect(canvas.renderFlag(), "map drawing on")
 
     switch(True)
     expect(ribbon_shown(), "ribbon shown")
-    expect(win.findChild(QTabBar, "ArcSkinViewTabs") is not None,
+    expect(win.findChild(QTabBar, "CyanSkinViewTabs") is not None,
            "view tabs above the map")
-    expect(win.findChild(QWidget, "ArcSkinMapFooter") is not None,
+    expect(win.findChild(QWidget, "CyanSkinMapFooter") is not None,
            "footer under the map")
     expect(not win.statusBar().isVisible(), "status bar hidden")
-    expect(skinned(), "ArcSkin style sheet applied")
-    expect(len(ramps()) >= 100, "ArcSkin colour ramps in the style")
-    expect(QgsSettings().value("UI/UITheme") == "ArcSkin", "UI theme set")
+    expect(skinned(), "CyanSkin style sheet applied")
+    expect(len(ramps()) >= 100, "CyanSkin colour ramps in the style")
+    expect(QgsSettings().value("UI/UITheme") == "CyanSkin", "UI theme set")
     missing = missing_from_ribbon(win)
     expect(not missing, f"QGIS tools the ribbon lacks: {missing}")
     return failures

@@ -27,7 +27,7 @@ from qgis.PyQt.QtWidgets import (
 from . import coords
 from .util import pro_icon, separator, tool_button, tr
 
-UNIT_KEY = "arcskin/coordinate_format"
+UNIT_KEY = "cyanskin/coordinate_format"
 # The project's own layer check states while Contents shows another map
 # view: a theme in a collection of the plugin's own (never saved).
 MAIN_STATE = "main"
@@ -45,7 +45,7 @@ class ViewTabs(QTabBar):
     """
 
     def __init__(self, iface):
-        super().__init__(objectName="ArcSkinViewTabs", drawBase=False,
+        super().__init__(objectName="CyanSkinViewTabs", drawBase=False,
                          expanding=False)
         self.iface = iface
         self.views = []  # (title, icon, dock or window; None: main map)
@@ -171,7 +171,7 @@ class ViewTabs(QTabBar):
         QTimer.singleShot(0, lambda: project.setDirty(dirty))
         main.refresh()
         label = self.iface.mainWindow().findChild(QLabel,
-                                                  "ArcSkinContentsMap")
+                                                  "CyanSkinContentsMap")
         if label:  # the map named at the top of Contents
             label.setText(dock.windowTitle() if dock else
                           project.title() or project.baseName() or tr("Map"))
@@ -288,7 +288,7 @@ class ScaleBox(QComboBox):
               50000000, 100000000]
 
     def __init__(self, canvas):
-        super().__init__(objectName="ArcSkinScale", editable=True,
+        super().__init__(objectName="CyanSkinScale", editable=True,
                          minimumWidth=150)
         self.canvas = canvas
         # A fresh locale: QGIS may switch group separators off globally.
@@ -385,7 +385,7 @@ class MapFooter(QWidget):
     """
 
     def __init__(self, iface):
-        super().__init__(objectName="ArcSkinMapFooter")
+        super().__init__(objectName="CyanSkinMapFooter")
         self.iface = iface
         self.canvas = canvas = iface.mapCanvas()
         win = iface.mainWindow()
@@ -402,7 +402,7 @@ class MapFooter(QWidget):
         constraints = tool_button("constraints", tr("Constraints"), True)
         _mirror(constraints, win.findChild(QAction, "mEnableAction"))
 
-        self.coords = QLineEdit(objectName="ArcSkinCoordinates",
+        self.coords = QLineEdit(objectName="CyanSkinCoordinates",
                                 toolTip=tr("Type coordinates and press Enter "
                                            "to go there"))
         self.coords.setMinimumWidth(240)
@@ -512,7 +512,7 @@ class MapFooter(QWidget):
                                        self._map_crs())
         except Exception:
             self.iface.messageBar().pushWarning(
-                "ArcSkin", tr("Coordinates not recognized: {}").format(
+                "CyanSkin", tr("Coordinates not recognized: {}").format(
                     self.coords.text()))
             return
         self.canvas.setCenter(point)
@@ -590,7 +590,7 @@ class MapAttribution(QWidget):
     """
 
     def __init__(self, canvas):
-        super().__init__(canvas, objectName="ArcSkinAttribution")
+        super().__init__(canvas, objectName="CyanSkinAttribution")
         self.canvas = canvas
         self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground)
         self.credits = QLabel()

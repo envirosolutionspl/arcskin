@@ -15,7 +15,7 @@ class Progress(QFrame):
     """Box in the middle of ``window`` with a message and a progress bar."""
 
     def __init__(self, window, text):
-        super().__init__(window, objectName="ArcSkinProgress",
+        super().__init__(window, objectName="CyanSkinProgress",
                          frameShape=QFrame.Shape.StyledPanel,
                          autoFillBackground=True)
         box = QVBoxLayout(self)

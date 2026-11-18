@@ -2,7 +2,7 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="pl">
   <context>
-    <name>ArcSkin</name>
+    <name>CyanSkin</name>
     <message>
       <source>Topographic</source>
       <translation>Topograficzna</translation>
@@ -352,12 +352,12 @@
       <translation>Filtr</translation>
     </message>
     <message>
-      <source>ArcSkin look</source>
-      <translation>Wygląd ArcSkin</translation>
+      <source>CyanSkin look</source>
+      <translation>Wygląd CyanSkin</translation>
     </message>
     <message>
-      <source>Applying the ArcSkin look…</source>
-      <translation>Stosowanie wyglądu ArcSkin…</translation>
+      <source>Applying the CyanSkin look…</source>
+      <translation>Stosowanie wyglądu CyanSkin…</translation>
     </message>
     <message>
       <source>Restoring the QGIS look…</source>

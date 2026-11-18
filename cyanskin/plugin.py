@@ -1,4 +1,4 @@
-"""ArcSkin plugin: ArcGIS Pro look for QGIS, fully reverted on disable.
+"""CyanSkin plugin: ArcGIS Pro look for QGIS, fully reverted on disable.
 
 A theme is a directory under ``resources/themes/<name>/`` with two files:
 
@@ -25,15 +25,15 @@ from .symbology import ProSymbology
 from .util import Changes, tr
 
 PLUGIN_DIR = Path(__file__).resolve().parent
-MENU_NAME = "&ArcSkin"
+MENU_NAME = "&CyanSkin"
 THEME = "pro_light"
 VARIABLE_RE = re.compile(r"^\s*@([\w-]+)\s*:\s*(.+?)\s*;\s*$", re.MULTILINE)
 # Window layout before the skin, kept in settings so that disabling the
 # skin after a QGIS restart still brings the original toolbars back.
-STATE_KEY = "arcskin/original_window_state"
+STATE_KEY = "cyanskin/original_window_state"
 # The user's own on/off choice. Written only on a click, so unloading for
 # an update, the plugin manager or QGIS quitting never change it.
-ENABLED_KEY = "arcskin/enabled"
+ENABLED_KEY = "cyanskin/enabled"
 
 
 def load_qss(theme: str) -> str:
@@ -54,7 +54,7 @@ def load_qss(theme: str) -> str:
     )
 
 
-class ArcSkinPlugin:
+class CyanSkinPlugin:
     """QGIS plugin entry point: a checkable action toggles the Pro look."""
 
     def __init__(self, iface, translator=None):
@@ -65,7 +65,7 @@ class ArcSkinPlugin:
     def initGui(self):  # noqa: N802 (QGIS API name)
         icon = QIcon(str(PLUGIN_DIR / "resources" / "icons" / "icon.svg"))
         self.action = QAction(
-            icon, tr("ArcSkin look"), self.iface.mainWindow(), checkable=True
+            icon, tr("CyanSkin look"), self.iface.mainWindow(), checkable=True
         )
         self.action.toggled.connect(self.set_enabled)
         self.action.triggered.connect(
@@ -119,7 +119,7 @@ class ArcSkinPlugin:
                 (3, lambda: ProSymbology(changes, self.iface.mapCanvas())),
             ]
             total = sum(weight for weight, _ in steps)
-            progress = Progress(win, tr("Applying the ArcSkin look…"))
+            progress = Progress(win, tr("Applying the CyanSkin look…"))
             try:
                 done = 0
                 for weight, step in steps:

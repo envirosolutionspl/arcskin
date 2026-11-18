@@ -12,7 +12,7 @@ from qgis.core import (
     QgsSingleBandPseudoColorRenderer, QgsStyle,
 )
 
-from arcskin.contents_views import ramp_limits
+from cyanskin.contents_views import ramp_limits
 
 LOW, HIGH = 5, 104  # values of the test raster
 

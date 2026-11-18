@@ -10,7 +10,7 @@ whatever order the plugins were switched on or off.
 
 The block goes first so that a sheet set later wins on rules of equal
 specificity: the skin is the base look, a decorative skin or the user's
-font choice sits on top of it. The ``#ArcSkin…`` rules still win by
+font choice sits on top of it. The ``#CyanSkin…`` rules still win by
 specificity.
 
 Should somebody replace the whole sheet while the skin is on (QGIS does
@@ -25,8 +25,8 @@ import re
 from qgis.PyQt.QtCore import QEvent, QObject, QTimer
 from qgis.PyQt.QtWidgets import QApplication
 
-MARK_BEGIN = "/* arcskin: begin */"
-MARK_END = "/* arcskin: end */"
+MARK_BEGIN = "/* cyanskin: begin */"
+MARK_END = "/* cyanskin: end */"
 BLOCK_RE = re.compile(re.escape(MARK_BEGIN) + ".*?" + re.escape(MARK_END)
                       + r"\n?", re.DOTALL)
 

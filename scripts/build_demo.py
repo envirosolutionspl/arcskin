@@ -1,4 +1,4 @@
-"""Build the demo project demo/arcskin_demo.qgz (run inside QGIS).
+"""Build the demo project demo/cyanskin_demo.qgz (run inside QGIS).
 
 In the QGIS Python console:
 
@@ -34,7 +34,7 @@ REPO = Path(globals().get("REPO", Path(__file__).resolve().parent.parent
                           if "__file__" in globals() else "."))
 DEMO = REPO / "demo"
 DATA = DEMO / "data"
-GPKG = DATA / "arcskin_demo.gpkg"
+GPKG = DATA / "cyanskin_demo.gpkg"
 RASTER = DATA / "distance_from_coast.tif"
 SOURCE = Path(QgsApplication.pkgDataPath()) / "resources" / "data" / \
     "world_map.gpkg"
@@ -163,7 +163,7 @@ def build_layout(project, map_layers, extent_layer):
     layout.initializeDefaults()
     layout.setName("World overview")
     title = QgsLayoutItemLabel(layout)
-    title.setText("ArcSkin demo — world overview")
+    title.setText("CyanSkin demo — world overview")
     title_format = QgsTextFormat()
     title_format.setFont(QFont("Tahoma"))
     title_format.setSize(20)
@@ -231,7 +231,7 @@ def build_project():
     project = QgsProject.instance()
     project.clear()
     project.setCrs(QgsCoordinateReferenceSystem("EPSG:8857"))  # Equal Earth
-    project.setTitle("ArcSkin demo")
+    project.setTitle("CyanSkin demo")
     raster = QgsRasterLayer(str(RASTER), "Distance from coast (km)")
     style_raster(raster)
     countries = QgsVectorLayer(f"{GPKG}|layername=countries", "Countries")
@@ -254,8 +254,8 @@ def build_project():
                           "Distance from coast": [raster]}, world)
     if "iface" in globals():  # QGIS saves the open canvas extent too
         globals()["iface"].mapCanvas().setExtent(world)
-    project.write(str(DEMO / "arcskin_demo.qgz"))
-    _without_local_paths(DEMO / "arcskin_demo.qgz")
+    project.write(str(DEMO / "cyanskin_demo.qgz"))
+    _without_local_paths(DEMO / "cyanskin_demo.qgz")
 
 
 def _without_local_paths(path):

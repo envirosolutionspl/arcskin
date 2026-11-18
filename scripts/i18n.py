@@ -1,12 +1,12 @@
 """Translations: extract tr("...") strings to .ts and compile .ts to .qm.
 
 Usage:
-    python scripts/i18n.py update    # refresh arcskin/i18n/*.ts from code
-    python scripts/i18n.py compile   # arcskin/i18n/*.ts -> *.qm
+    python scripts/i18n.py update    # refresh cyanskin/i18n/*.ts from code
+    python scripts/i18n.py compile   # cyanskin/i18n/*.ts -> *.qm
 
 The .ts files are standard Qt Linguist files (also usable with Transifex).
 Compilation is done here, so no Qt tools (lrelease) are needed. To add a
-language, create an empty ``arcskin/i18n/arcskin_<code>.ts`` and run update.
+language, create an empty ``cyanskin/i18n/cyanskin_<code>.ts`` and run update.
 """
 
 import ast
@@ -16,9 +16,9 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-PLUGIN = ROOT / "arcskin"
+PLUGIN = ROOT / "cyanskin"
 I18N = PLUGIN / "i18n"
-CONTEXT = "ArcSkin"
+CONTEXT = "CyanSkin"
 QM_MAGIC = bytes.fromhex("3cb86418caef9c95cd211cbf60a1bddd")
 
 
@@ -97,13 +97,13 @@ def write_qm(path, translations):
 def main(command):
     if command == "update":
         sources = source_strings()
-        for path in sorted(I18N.glob("arcskin_*.ts")):
+        for path in sorted(I18N.glob("cyanskin_*.ts")):
             language = path.stem.split("_", 1)[1]
             write_ts(path, language, read_ts(path), sources)
             done = sum(1 for t in read_ts(path).values() if t)
             print(f"{path.name}: {done}/{len(sources)} translated")
     elif command == "compile":
-        for path in sorted(I18N.glob("arcskin_*.ts")):
+        for path in sorted(I18N.glob("cyanskin_*.ts")):
             write_qm(path.with_suffix(".qm"), read_ts(path))
             print(path.with_suffix(".qm").name)
     else:

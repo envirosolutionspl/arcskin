@@ -11,7 +11,7 @@
 * New labels use Pro's default text symbol: Tahoma 10 pt, black (QGIS's
   font where Tahoma is not installed, as on most Linux systems).
 * About 100 color ramps (resources/color_ramps.json) are added to the QGIS
-  style, tagged "ArcSkin", for classifying vector layers and stretching
+  style, tagged "CyanSkin", for classifying vector layers and stretching
   rasters.
 """
 
@@ -28,9 +28,9 @@ from qgis.core import (
 from qgis.PyQt.QtCore import QTimer
 from qgis.PyQt.QtGui import QColor, QFont
 
-RAMP_NAME = "ArcSkin Pastel"
+RAMP_NAME = "CyanSkin Pastel"
 RAMPS = Path(__file__).resolve().parent / "resources" / "color_ramps.json"
-TAG = "ArcSkin"
+TAG = "CyanSkin"
 PALETTE = ["#FFBFE7", "#FDBCBD", "#FED180", "#88CC64", "#C49FD8", "#D5FEBD",
            "#FEFFBF", "#BCE9FF", "#D5C49F", "#C0D3FF", "#FEEDBF", "#BDFDE7",
            "#E7BDFE", "#A1FE71", "#75E0FD", "#FE8181", "#CEA864", "#DFE2DF"]

@@ -22,8 +22,8 @@ from .util import Changes, pro_icon, separator, tool_button, tr
 
 # Widget properties marking what was done: icons swapped in a window,
 # an attribute table dressed.
-ICONS_DONE = "arcskinIconsSwapped"
-TABLE_DONE = "arcskinTableDressed"
+ICONS_DONE = "cyanskinIconsSwapped"
+TABLE_DONE = "cyanskinTableDressed"
 # Pro's attribute table toolbar: (label, [(QGIS action, icon, caption)]).
 TABLE_TOOLBAR = [
     (tr("Field:"), [
@@ -55,7 +55,7 @@ class TableFooter(QWidget):
     """
 
     def __init__(self, dialog, layer):
-        super().__init__(objectName="ArcSkinTableFooter")
+        super().__init__(objectName="CyanSkinTableFooter")
         self.layer = layer
         self.table = dialog.findChild(QTableView, "mTableView")
         # Not "actions": that would hide QWidget.actions() (the icon theme
@@ -179,7 +179,7 @@ def dress_attribute_table(dialog, changes):
     changes.add(lambda: sip.isdeleted(bar)
                 or (bar.clear(), bar.addActions(original)))
     for label, items in TABLE_TOOLBAR:
-        bar.addWidget(QLabel(label, objectName="ArcSkinToolbarLabel"))
+        bar.addWidget(QLabel(label, objectName="CyanSkinToolbarLabel"))
         for name, icon, caption in items:
             action = actions.get(name)
             if action is None:

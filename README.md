@@ -1,13 +1,13 @@
-# ArcSkin
+# CyanSkin
 
-[![Tests](https://github.com/envirosolutionspl/arcskin/actions/workflows/tests.yml/badge.svg)](https://github.com/envirosolutionspl/arcskin/actions/workflows/tests.yml)
-[![Qt5 and Qt6 compatibility](https://github.com/envirosolutionspl/arcskin/actions/workflows/qt5-qt6-compat.yml/badge.svg)](https://github.com/envirosolutionspl/arcskin/actions/workflows/qt5-qt6-compat.yml)
-[![Security and quality](https://github.com/envirosolutionspl/arcskin/actions/workflows/security_and_quality.yml/badge.svg)](https://github.com/envirosolutionspl/arcskin/actions/workflows/security_and_quality.yml)
-[![Release build](https://github.com/envirosolutionspl/arcskin/actions/workflows/release.yml/badge.svg)](https://github.com/envirosolutionspl/arcskin/actions/workflows/release.yml)
-[![Release](https://img.shields.io/github/v/release/envirosolutionspl/arcskin)](https://github.com/envirosolutionspl/arcskin/releases/latest)
-[![plugins.qgis.org](https://img.shields.io/badge/plugins.qgis.org-arcskin-589632?logo=qgis&logoColor=white)](https://plugins.qgis.org/plugins/arcskin/)
+[![Tests](https://github.com/envirosolutionspl/cyanskin/actions/workflows/tests.yml/badge.svg)](https://github.com/envirosolutionspl/cyanskin/actions/workflows/tests.yml)
+[![Qt5 and Qt6 compatibility](https://github.com/envirosolutionspl/cyanskin/actions/workflows/qt5-qt6-compat.yml/badge.svg)](https://github.com/envirosolutionspl/cyanskin/actions/workflows/qt5-qt6-compat.yml)
+[![Security and quality](https://github.com/envirosolutionspl/cyanskin/actions/workflows/security_and_quality.yml/badge.svg)](https://github.com/envirosolutionspl/cyanskin/actions/workflows/security_and_quality.yml)
+[![Release build](https://github.com/envirosolutionspl/cyanskin/actions/workflows/release.yml/badge.svg)](https://github.com/envirosolutionspl/cyanskin/actions/workflows/release.yml)
+[![Release](https://img.shields.io/github/v/release/envirosolutionspl/cyanskin)](https://github.com/envirosolutionspl/cyanskin/releases/latest)
+[![plugins.qgis.org](https://img.shields.io/badge/plugins.qgis.org-cyanskin-589632?logo=qgis&logoColor=white)](https://plugins.qgis.org/plugins/cyanskin/)
 
-**ArcSkin gives QGIS a ribbon interface**: a ribbon built from QGIS's own tools,
+**CyanSkin gives QGIS a ribbon interface**: a ribbon built from QGIS's own tools,
 reorganised panes, view tabs above the map, a map status bar, light flat icons for
 the whole of QGIS, default symbology and colour ramps. Everything is switched on
 with one click and fully reverted with the next one.
@@ -16,9 +16,9 @@ It is meant for people who move to QGIS from other desktop GIS software with a
 ribbon interface, such as ArcGIS Pro, for training rooms and for organisations
 moving to QGIS.
 
-![ArcSkin demo project: ribbon, Contents, view tabs, Catalog and the map status bar](docs/images/overview.png)
+![CyanSkin demo project: ribbon, Contents, view tabs, Catalog and the map status bar](docs/images/overview.png)
 
-> ArcSkin is an independent open source project. It is not affiliated with,
+> CyanSkin is an independent open source project. It is not affiliated with,
 > sponsored or endorsed by Esri. ArcGIS and ArcGIS Pro are trademarks of Esri.
 
 ## Features
@@ -41,7 +41,7 @@ moving to QGIS.
   topological editing, intersections, self-snapping, avoid overlap).
 - In a window narrower than a tab, the tab scrolls sideways.
 - Blue *Project* button with project commands, recent projects, import/export,
-  settings, the complete QGIS menu and the ArcSkin switch.
+  settings, the complete QGIS menu and the CyanSkin switch.
 - Title row with a Quick Access Toolbar, the project name and QGIS's search box
   centred at the top.
 - Basemap gallery: Sentinel-2 Cloudless and Terrain (EOX), Topographic
@@ -99,7 +99,7 @@ last record, "N of M selected", filters, zoom slider, refresh).
   installed).
 - About 100 colour ramps (sequential, diverging, thematic such as relief, depth,
   slope, aspect and rainfall, spectral and qualitative) are added to the QGIS
-  style with the tag *ArcSkin*, for classifying vectors and stretching rasters.
+  style with the tag *CyanSkin*, for classifying vectors and stretching rasters.
   Ramps of an earlier version are replaced.
 
 ![Symbology pane](docs/images/symbology.png)
@@ -122,43 +122,43 @@ last record, "N of M selected", filters, zoom slider, refresh).
 ## Installation
 
 From the QGIS plugin repository: *Plugins → Manage and Install Plugins… → All*,
-search for **ArcSkin**, click *Install Plugin*. ArcSkin is marked experimental:
+search for **CyanSkin**, click *Install Plugin*. CyanSkin is marked experimental:
 tick *Show also experimental plugins* under *Settings* in the same dialog first.
 
 Or from a ZIP file:
 
-1. Download `arcskin-<version>.zip` from the
-   [releases](https://github.com/envirosolutionspl/arcskin/releases).
+1. Download `cyanskin-<version>.zip` from the
+   [releases](https://github.com/envirosolutionspl/cyanskin/releases).
 2. In QGIS open *Plugins → Manage and Install Plugins… → Install from ZIP*,
    choose the file and click *Install Plugin*.
 
 The ZIP from GitHub's *Code → Download ZIP* button is the whole repository, not
-the plugin: QGIS cannot load it ("No module named 'arcskin-main/arcskin'").
+the plugin: QGIS cannot load it ("No module named 'cyanskin-main/cyanskin'").
 
-The ArcSkin look is applied as soon as the plugin is installed. Switching takes a
+The CyanSkin look is applied as soon as the plugin is installed. Switching takes a
 few seconds; a progress box shows the work.
 
 ## Turning the look on and off
 
 | What you want | How |
 |---|---|
-| Switch the look off for now | Blue **Project** button → **ArcSkin look** |
-| Switch it on again | **Plugins → ArcSkin → ArcSkin look** (QGIS menu bar) |
-| Keep plain QGIS after restarting | **Plugins → Manage and Install Plugins… → Installed**, untick **ArcSkin** |
-| Remove the plugin | Same dialog, select **ArcSkin**, **Uninstall Plugin** |
+| Switch the look off for now | Blue **Project** button → **CyanSkin look** |
+| Switch it on again | **Plugins → CyanSkin → CyanSkin look** (QGIS menu bar) |
+| Keep plain QGIS after restarting | **Plugins → Manage and Install Plugins… → Installed**, untick **CyanSkin** |
+| Remove the plugin | Same dialog, select **CyanSkin**, **Uninstall Plugin** |
 
-While the plugin is active, ArcSkin is switched on at every QGIS start.
+While the plugin is active, CyanSkin is switched on at every QGIS start.
 
 Switching the look off restores QGIS as it was: toolbars, panes and their
 positions, the UI theme, icons, the status bar, project styles and the colour ramps
 added to the QGIS style. Your projects are not changed by switching.
 
-The first time ArcSkin is switched on, most icons change at once. Layer icons in
+The first time CyanSkin is switched on, most icons change at once. Layer icons in
 *Contents* and *Catalog* follow after a QGIS restart; a message says so.
 
 ## Demo project
 
-`demo/arcskin_demo.qgz` is a world map in the Equal Earth projection: countries
+`demo/cyanskin_demo.qgz` is a world map in the Equal Earth projection: countries
 coloured by climate zone, country names, disputed borders and a raster of the
 distance from the coast, with two extra map views (*Climate zones*, *Distance from
 coast*) and a print layout. The data come from Natural Earth (public domain).
@@ -175,7 +175,7 @@ coast*) and a print layout. The data come from Natural Earth (public domain).
 ## Development
 
 ```
-arcskin/                      the plugin (packed into the ZIP)
+cyanskin/                      the plugin (packed into the ZIP)
   plugin.py                   on / off switch, progress box
   stylesheet.py               the skin's block in the application style sheet
   util.py                     tr(), bundled icons, undo log of all changes (Changes)
@@ -191,7 +191,7 @@ arcskin/                      the plugin (packed into the ZIP)
   resources/                  icons, style sheets, generated icon theme, colour ramps
   i18n/                       translations (.ts sources)
 scripts/
-  package.py                  builds dist/arcskin-<version>.zip
+  package.py                  builds dist/cyanskin-<version>.zip
   i18n.py                     update .ts files from the code, compile .qm files
   build_icon_theme.py         generates the QGIS icon theme (run with python-qgis)
   build_demo.py               builds the demo project (QGIS Python console)
@@ -199,25 +199,25 @@ demo/                         demo project and data
 docs/images/                  screenshots
 ```
 
-Every change ArcSkin makes to QGIS goes through `util.Changes`, which records how to
+Every change CyanSkin makes to QGIS goes through `util.Changes`, which records how to
 undo it; switching off replays that log backwards.
 
-ArcSkin shares the application style sheet with QGIS (UI theme, font settings) and
+CyanSkin shares the application style sheet with QGIS (UI theme, font settings) and
 with other plugins that style the interface. Its rules sit in a marked block
-(`/* arcskin: begin */ … /* arcskin: end */`) in front of the rest of the sheet;
+(`/* cyanskin: begin */ … /* cyanskin: end */`) in front of the rest of the sheet;
 switching off removes only that block, and if something replaces the whole sheet
 while the skin is on, the block is put back. A plugin that keeps its own block the
-same way can be switched on and off in any order together with ArcSkin. Plugins
-that adapt to ArcSkin can find its title row and coordinate box by the object names
-`ArcSkinTitleRow` and `ArcSkinCoordinates`.
+same way can be switched on and off in any order together with CyanSkin. Plugins
+that adapt to CyanSkin can find its title row and coordinate box by the object names
+`CyanSkinTitleRow` and `CyanSkinCoordinates`.
 
 For development, link the plugin folder into your QGIS profile (PowerShell as
 administrator, or with Windows developer mode on):
 
 ```powershell
 New-Item -ItemType SymbolicLink `
-  -Path "$env:APPDATA\QGIS\QGIS4\profiles\default\python\plugins\arcskin" `
-  -Target "$PWD\arcskin"
+  -Path "$env:APPDATA\QGIS\QGIS4\profiles\default\python\plugins\cyanskin" `
+  -Target "$PWD\cyanskin"
 ```
 
 **Tests.** `tests/` holds unit tests that need no QGIS window: coordinate
@@ -229,7 +229,7 @@ the repository root (they also run in CI on QGIS 3.44 and the latest release):
 C:\OSGeo4W\bin\python-qgis.bat -m unittest discover -s tests -t . -v
 ```
 
-`tests/smoke_in_qgis.py` is a smoke test for a running QGIS with ArcSkin on:
+`tests/smoke_in_qgis.py` is a smoke test for a running QGIS with CyanSkin on:
 run it from the Python console and it switches the look off and on, checking
 that QGIS comes back as it was and that the skin is complete. It also lists
 any tool of QGIS's core toolbars that no ribbon button or drop-down reaches
@@ -238,22 +238,22 @@ yet).
 
 **Translations.** Texts in the code are English and go through `tr("...")`. After
 changing them run `python scripts/i18n.py update`, translate the new entries in
-`arcskin/i18n/arcskin_pl.ts` (Qt Linguist or a text editor) and the `.qm` files are
+`cyanskin/i18n/cyanskin_pl.ts` (Qt Linguist or a text editor) and the `.qm` files are
 compiled when packaging. For a new language, add an empty
-`arcskin/i18n/arcskin_<code>.ts` and run `update`.
+`cyanskin/i18n/cyanskin_<code>.ts` and run `update`.
 
 **Packaging and releases.** `python scripts/package.py` writes
-`dist/arcskin-<version>.zip`. For a release, raise `version` in
-`arcskin/metadata.txt`, tag the commit `v<version>` and push the tag; GitHub
+`dist/cyanskin-<version>.zip`. For a release, raise `version` in
+`cyanskin/metadata.txt`, tag the commit `v<version>` and push the tag; GitHub
 Actions builds the ZIP and attaches it to the release. It also uploads the ZIP
-to [plugins.qgis.org](https://plugins.qgis.org/plugins/arcskin/), where the new
+to [plugins.qgis.org](https://plugins.qgis.org/plugins/cyanskin/), where the new
 version waits for approval. This needs a token from the plugin's *Tokens* page
 on plugins.qgis.org, kept in the GitHub repository settings (Actions) under the
 name `QGIS_PLUGIN_TOKEN`; without it the upload is skipped.
 
 ## Credits and licence
 
-ArcSkin is licensed under the GPL-2.0-or-later, see [LICENSE](LICENSE). The icon
+CyanSkin is licensed under the GPL-2.0-or-later, see [LICENSE](LICENSE). The icon
 theme is derived from QGIS's own icons (GPL-2.0-or-later). Demo data: Natural
 Earth (public domain). Basemaps: © OpenStreetMap contributors, OpenTopoMap
 (CC-BY-SA), Humanitarian OpenStreetMap Team / OpenStreetMap France, OpenFreeMap

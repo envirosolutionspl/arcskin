@@ -5,7 +5,7 @@ import unittest
 from qgis.PyQt.QtCore import QObject, Qt, pyqtSignal
 from qgis.PyQt.QtTest import QTest
 
-from arcskin.mapview import ScaleBox
+from cyanskin.mapview import ScaleBox
 
 
 class Canvas(QObject):

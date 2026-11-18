@@ -4,10 +4,10 @@ import re
 import unittest
 
 import build_icon_theme
-from arcskin import basemaps, contents_views, dialogs, panes, ribbon
-from arcskin.icon_theme import SOURCE as THEME_DIR
-from arcskin.plugin import PLUGIN_DIR, THEME, load_qss
-from arcskin.util import ICON_DIR
+from cyanskin import basemaps, contents_views, dialogs, panes, ribbon
+from cyanskin.icon_theme import SOURCE as THEME_DIR
+from cyanskin.plugin import PLUGIN_DIR, THEME, load_qss
+from cyanskin.util import ICON_DIR
 
 CODE = "\n".join(path.read_text(encoding="utf-8")
                  for path in PLUGIN_DIR.glob("*.py"))
@@ -35,13 +35,13 @@ def referenced_icons():
 class ObjectNames(unittest.TestCase):
     """Widget names other plugins find the skin's widgets by.
 
-    Plugins that adapt to ArcSkin look up its title row and coordinate box
-    by these names (they are the only way without importing ArcSkin).
+    Plugins that adapt to CyanSkin look up its title row and coordinate box
+    by these names (they are the only way without importing CyanSkin).
     Renaming one silently breaks them: treat the names as public.
     """
 
     def test_names_other_plugins_rely_on(self):
-        for name in ("ArcSkinTitleRow", "ArcSkinCoordinates"):
+        for name in ("CyanSkinTitleRow", "CyanSkinCoordinates"):
             self.assertIn(f'objectName="{name}"', CODE, name)
 
 
@@ -85,7 +85,7 @@ class StyleSheet(unittest.TestCase):
         self.assertEqual(re.findall(r"@[\w-]+", self.qss), [])
 
     def test_selectors_name_widgets_the_code_creates(self):
-        for name in sorted(set(re.findall(r"#(ArcSkin\w+)", self.qss))):
+        for name in sorted(set(re.findall(r"#(CyanSkin\w+)", self.qss))):
             self.assertIn(f'"{name}"', CODE, f"selector #{name} is stale")
 
     def test_referenced_files_exist(self):

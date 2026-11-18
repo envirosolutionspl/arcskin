@@ -1,4 +1,4 @@
-"""ArcSkin test suite: unit tests that need no QGIS window.
+"""CyanSkin test suite: unit tests that need no QGIS window.
 
 Run with QGIS's Python, from the repository root:
 
