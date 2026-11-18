@@ -14,6 +14,7 @@ from qgis.PyQt.QtCore import QByteArray, QCoreApplication
 from qgis.PyQt.QtGui import QAction, QIcon
 from qgis.PyQt.QtWidgets import QToolBar
 
+from . import legacy
 from .dialogs import WindowDresser
 from .icon_theme import apply_icon_theme
 from .mapview import frame_map
@@ -71,6 +72,13 @@ class CyanSkinPlugin:
         self.action.triggered.connect(
             lambda on: QgsSettings().setValue(ENABLED_KEY, on))
         self.iface.addPluginToMenu(MENU_NAME, self.action)
+        if legacy.old_plugin_active():  # two skins would fight
+            self.iface.messageBar().pushWarning(
+                "CyanSkin", tr("CyanSkin continues the ArcSkin plugin: "
+                               "uninstall ArcSkin, then restart QGIS."))
+            self.action.setEnabled(False)
+            return
+        legacy.migrate(QgsSettings())
         # The skin goes on when loaded, unless the user switched it off.
         # At QGIS start-up wait until all plugins are loaded so their
         # toolbars reach the ribbon's Add-ins tab.

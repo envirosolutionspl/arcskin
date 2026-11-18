@@ -17,6 +17,7 @@ from qgis.PyQt.QtWidgets import (
     QGridLayout, QMenu, QToolButton, QWidget, QWidgetAction,
 )
 
+from . import legacy
 from .util import pro_icon, tr
 
 MARKER = "cyanskin/basemap"  # custom property of layers added here
@@ -105,7 +106,8 @@ def set_basemap(iface, name, uri, attribution):
     """Replace the current basemap with ``uri`` (``None`` only removes)."""
     project = QgsProject.instance()
     old = [lid for lid, layer in project.mapLayers().items()
-           if layer.customProperty(MARKER)]
+           if layer.customProperty(MARKER)
+           or layer.customProperty(legacy.OLD_BASEMAP)]
     project.removeMapLayers(old)
     if uri is None:
         return

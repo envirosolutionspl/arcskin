@@ -356,6 +356,10 @@
       <translation>Wygląd CyanSkin</translation>
     </message>
     <message>
+      <source>CyanSkin continues the ArcSkin plugin: uninstall ArcSkin, then restart QGIS.</source>
+      <translation>CyanSkin jest kontynuacją wtyczki ArcSkin: odinstaluj ArcSkin i uruchom ponownie QGIS.</translation>
+    </message>
+    <message>
       <source>Applying the CyanSkin look…</source>
       <translation>Stosowanie wyglądu CyanSkin…</translation>
     </message>
