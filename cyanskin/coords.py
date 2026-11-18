@@ -1,6 +1,6 @@
-"""Coordinate display units of the Pro map footer: format and parse.
+"""Coordinate display units of the map footer: format and parse.
 
-Units (as in ArcGIS Pro): Decimal Degrees, Degrees Minutes Seconds,
+Units: Decimal Degrees, Degrees Minutes Seconds,
 Degrees Decimal Minutes, MGRS, US National Grid, UTM and linear units of
 the map coordinates. Geographic and grid units work on WGS 84 longitude /
 latitude; linear units on the map's own (projected) coordinates.

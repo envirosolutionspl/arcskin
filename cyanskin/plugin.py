@@ -1,4 +1,4 @@
-"""CyanSkin plugin: ArcGIS Pro look for QGIS, fully reverted on disable.
+"""CyanSkin plugin: a ribbon look for QGIS, fully reverted on disable.
 
 A theme is a directory under ``resources/themes/<name>/`` with two files:
 
@@ -22,12 +22,12 @@ from .panes import arrange_panes
 from .progress import Progress
 from .ribbon import build_ribbon
 from .stylesheet import StyleSheetBlock
-from .symbology import ProSymbology
+from .symbology import DefaultSymbology
 from .util import Changes, tr
 
 PLUGIN_DIR = Path(__file__).resolve().parent
 MENU_NAME = "&CyanSkin"
-THEME = "pro_light"
+THEME = "light"
 VARIABLE_RE = re.compile(r"^\s*@([\w-]+)\s*:\s*(.+?)\s*;\s*$", re.MULTILINE)
 # Window layout before the skin, kept in settings so that disabling the
 # skin after a QGIS restart still brings the original toolbars back.
@@ -56,7 +56,7 @@ def load_qss(theme: str) -> str:
 
 
 class CyanSkinPlugin:
-    """QGIS plugin entry point: a checkable action toggles the Pro look."""
+    """QGIS plugin entry point: a checkable action toggles the look."""
 
     def __init__(self, iface, translator=None):
         self.iface = iface
@@ -104,12 +104,12 @@ class CyanSkinPlugin:
                 QCoreApplication.removeTranslator(self.translator)
 
     def set_enabled(self, enabled: bool) -> None:
-        """Apply the Pro look or restore the previous QGIS interface."""
+        """Apply the look or restore the previous QGIS interface."""
         win = self.iface.mainWindow()
         settings = QgsSettings()
         if enabled and self.changes is None:
             # The skin goes on for the first time (not again at a QGIS
-            # start): only then do the panes move to Pro's places, so
+            # start): only then do the panes move to their default places, so
             # that panes the user moved stay where QGIS restored them.
             first = settings.value(STATE_KEY) is None
             if first:
@@ -124,7 +124,7 @@ class CyanSkinPlugin:
                 (1, lambda: build_ribbon(self.iface, changes, self.action)),
                 (1, lambda: arrange_panes(self.iface, changes, first)),
                 (1, lambda: frame_map(self.iface, changes)),
-                (3, lambda: ProSymbology(changes, self.iface.mapCanvas())),
+                (3, lambda: DefaultSymbology(changes, self.iface.mapCanvas())),
             ]
             total = sum(weight for weight, _ in steps)
             progress = Progress(win, tr("Applying the CyanSkin look…"))

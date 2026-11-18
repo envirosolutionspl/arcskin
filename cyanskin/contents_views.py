@@ -1,7 +1,7 @@
-"""Contents pane "List By" views, as in ArcGIS Pro's TOC.
+"""Contents pane "List By" views.
 
 Drawing Order is QGIS's own layer tree. The other views are lists of the
-project's layers with one Pro-style check box each:
+project's layers with one check box each:
 
 * Data Source - layers grouped by file, database or service,
 * Selection - selected feature count; clicking makes the layer active,
@@ -9,7 +9,7 @@ project's layers with one Pro-style check box each:
 * Snapping - snapping to the layer (switches snapping to per-layer mode),
 * Labeling - labels on.
 
-Raster ramps get Pro's short "Value" legend (see RasterLegend).
+Raster ramps get a short "Value" legend (see RasterLegend).
 """
 
 from pathlib import Path
@@ -27,7 +27,7 @@ from qgis.PyQt.QtWidgets import (
     QTreeWidgetItem, QVBoxLayout, QWidget,
 )
 
-from .util import pro_icon, tr
+from .util import skin_icon, tr
 
 # key -> (icon, tooltip, heading)
 VIEWS = {
@@ -75,7 +75,7 @@ class ContentsViews(QWidget):
         for key, (icon, tip, _) in VIEWS.items():
             button = QToolButton(autoRaise=True, checkable=True,
                                  toolTip=tip)
-            button.setIcon(pro_icon(icon))
+            button.setIcon(skin_icon(icon))
             button.setIconSize(QSize(20, 20))
             button.setChecked(key == self.view)
             button.clicked.connect(lambda _=False, k=key: self.show_view(k))
@@ -93,7 +93,7 @@ class ContentsViews(QWidget):
             signal.connect(self.refresh)
 
     def _header(self):
-        """View heading and the map row, like the top of Pro's Contents."""
+        """View heading and the map row at the top of Contents."""
         header = QWidget(objectName="CyanSkinContentsHeader")
         box = QVBoxLayout(header)
         box.setContentsMargins(8, 6, 4, 2)
@@ -102,7 +102,7 @@ class ContentsViews(QWidget):
                               objectName="CyanSkinContentsHeading")
         map_row = QHBoxLayout()
         map_icon = QLabel()
-        map_icon.setPixmap(pro_icon("new_map").pixmap(16, 16))
+        map_icon.setPixmap(skin_icon("new_map").pixmap(16, 16))
         self.map_name = QLabel(objectName="CyanSkinContentsMap")
         map_row.addWidget(map_icon)
         map_row.addWidget(self.map_name, 1)
@@ -142,7 +142,7 @@ class ContentsViews(QWidget):
                 name = _source_group(layer)
                 if name not in groups:
                     groups[name] = QTreeWidgetItem(self.tree, [name])
-                    groups[name].setIcon(0, pro_icon("catalog"))
+                    groups[name].setIcon(0, skin_icon("catalog"))
                 self._layer_item(groups[name], layer)
             self.tree.expandAll()
         else:
@@ -209,8 +209,8 @@ class ContentsViews(QWidget):
 
 # --- context menu icons ---------------------------------------------------
 
-# Layer context menu entries without (Pro) icons: QGIS source text in its
-# translation context, or an action object name -> Pro icon.
+# Layer context menu entries without icons: QGIS source text in its
+# translation context, or an action object name -> skin icon.
 MENU_ICONS = {
     ("QgsLayerTreeViewDefaultActions", "&Zoom to Layer(s)"): "zoom_layer",
     ("QgsLayerTreeViewDefaultActions", "Zoom to &Selection"): "zoom_selected",
@@ -247,7 +247,7 @@ def _menu_key(text):
 
 
 class LayerMenuIcons(QObject):
-    """Adds Pro icons to the Contents context menu each time it opens."""
+    """Adds skin icons to the Contents context menu each time it opens."""
 
     def __init__(self, view, changes):
         super().__init__(view)
@@ -268,7 +268,7 @@ class LayerMenuIcons(QObject):
         changes.add(self.stop)
 
     def dress(self, menu):
-        """Give the menu's entries Pro icons (QGIS's are kept for undo)."""
+        """Give the menu's entries skin icons (QGIS's are kept for undo)."""
         for action in menu.actions():
             text = _menu_key(action.text())
             icon = (self.icons.get(action.objectName())
@@ -279,7 +279,7 @@ class LayerMenuIcons(QObject):
                 continue
             if action.objectName() and id(action) not in self.saved:
                 self.saved[id(action)] = (action, action.icon())
-            action.setIcon(pro_icon(icon))
+            action.setIcon(skin_icon(icon))
 
     def stop(self):
         self.view.contextMenuAboutToShow.disconnect(self.dress)
@@ -291,7 +291,7 @@ class LayerMenuIcons(QObject):
 
 # --- raster legend ----------------------------------------------------------
 
-RAMP_PATCH = QSize(16, 36)  # about two text rows, as in Pro
+RAMP_PATCH = QSize(16, 36)  # about two text rows
 
 
 def ramp_limits(ramp):
@@ -316,9 +316,9 @@ def ramp_limits(ramp):
 
 
 class RasterLegend(QObject):
-    """Pro-style legend of stretched single band rasters.
+    """Compact legend of stretched single band rasters.
 
-    Pro lists "Value" and a short gradient patch with "High : max" and
+    It lists "Value" and a short gradient patch with "High : max" and
     "Low : min" beside it, where QGIS shows the band name and a tall ramp.
     Only the legend nodes shown in the Contents pane change: nothing is
     stored in the project, and QGIS rebuilds its own nodes on undo.
@@ -340,7 +340,7 @@ class RasterLegend(QObject):
                 if isinstance(node.layer(), QgsRasterLayer)]
 
     def dress(self):
-        """Pro's "Value" label and short ramp on every raster legend."""
+        """A "Value" label and a short ramp on every raster legend."""
         number = QgsNumericFormatContext()
         for node in self._raster_nodes():
             legend = self.model.layerLegendNodes(node)

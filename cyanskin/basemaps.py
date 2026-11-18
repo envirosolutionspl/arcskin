@@ -18,7 +18,7 @@ from qgis.PyQt.QtWidgets import (
 )
 
 from . import legacy
-from .util import pro_icon, tr
+from .util import skin_icon, tr
 
 MARKER = "cyanskin/basemap"  # custom property of layers added here
 OPENFREEMAP = "https://tiles.openfreemap.org"
@@ -136,7 +136,7 @@ def gallery_menu(iface, parent):
     grid = QGridLayout(grid_widget)
     for i, (name, thumb, uri, attribution) in enumerate(BASEMAPS):
         button = QToolButton(text=name, autoRaise=True)
-        button.setIcon(pro_icon(thumb))
+        button.setIcon(skin_icon(thumb))
         button.setIconSize(QSize(64, 48))
         button.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextUnderIcon)
         button.clicked.connect(

@@ -1,4 +1,4 @@
-/* CyanSkin "pro_light" - light flat theme inspired by ArcGIS Pro.
+/* CyanSkin "light" - light flat theme.
    Variable values come from variables.qss (substituted by plugin.py). */
 
 QWidget {
@@ -671,7 +671,7 @@ QLabel#CyanSkinRibbonCaption {
     font-size: 8pt;
 }
 
-/* --- Active pane: blue title and frame, as in Pro --------------------- */
+/* --- Active pane: blue title and frame ------------------------------- */
 
 QDockWidget[cyanskinActive="true"] {
     color: @accent;
@@ -723,7 +723,7 @@ QgsLayerTreeView::item:selected:hover {
     color: @text-emphasis;
 }
 
-/* --- Attribute table, as in Pro --------------------------------------- */
+/* --- Attribute table ------------------------------------------------- */
 
 QTableView#mTableView {
     gridline-color: @border-light;

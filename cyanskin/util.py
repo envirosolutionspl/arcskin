@@ -1,4 +1,4 @@
-"""Shared helpers: translation, Pro icons, small widgets, undo log."""
+"""Shared helpers: translation, skin icons, small widgets, undo log."""
 
 from pathlib import Path
 
@@ -7,7 +7,7 @@ from qgis.PyQt.QtCore import QCoreApplication
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QFrame, QToolButton
 
-ICON_DIR = Path(__file__).resolve().parent / "resources" / "icons" / "pro"
+ICON_DIR = Path(__file__).resolve().parent / "resources" / "icons" / "skin"
 
 
 def tr(text):
@@ -15,15 +15,15 @@ def tr(text):
     return QCoreApplication.translate("CyanSkin", text)
 
 
-def pro_icon(name):
-    """Return the bundled Pro-style icon ``name``."""
+def skin_icon(name):
+    """Return the bundled skin icon ``name``."""
     return QIcon(str(ICON_DIR / f"{name}.svg"))
 
 
 def tool_button(icon, tip, checkable=False):
-    """Flat tool button with a Pro icon and a tooltip."""
+    """Flat tool button with a skin icon and a tooltip."""
     button = QToolButton(autoRaise=True, checkable=checkable, toolTip=tip)
-    button.setIcon(pro_icon(icon))
+    button.setIcon(skin_icon(icon))
     return button
 
 

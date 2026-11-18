@@ -50,7 +50,7 @@ with_variable('lat', y(point_on_surface($geometry)),
        WHEN @lat > -23.5 THEN 'Tropical'
        WHEN @lat > -35 THEN 'Subtropical (south)'
        ELSE 'Temperate (south)' END)"""
-# Pastel unique-value colors in the style of Pro's default scheme.
+# Pastel unique-value colors.
 ZONE_COLORS = ["#BEE8FF", "#D3FFBE", "#FFFFBE", "#FFBEBE", "#FFD37F",
                "#C29ED7"]
 
@@ -106,7 +106,7 @@ def build_data():
 
 
 def style_countries(layer):
-    """Unique values in pastel colors with a 0.7 pt grey outline (Pro)."""
+    """Unique values in pastel colors with a 0.7 pt grey outline."""
     categories = []
     for zone, color in zip(ZONES, ZONE_COLORS):
         symbol = QgsFillSymbol.createSimple(
@@ -123,7 +123,7 @@ def style_points(layer):
          "size": "1.6"})))
     settings = QgsPalLayerSettings()
     settings.fieldName = "NAME"
-    text = QgsTextFormat()  # Pro's default label symbol
+    text = QgsTextFormat()  # the skin's default label symbol
     text.setFont(QFont("Tahoma"))
     text.setSize(10)
     text.setSizeUnit(Qgis.RenderUnit.Points)
@@ -145,7 +145,7 @@ def style_raster(layer):
         QgsColorRampShader.ColorRampItem(1500, QColor("#2f6ea8"), "1500"),
         QgsColorRampShader.ColorRampItem(2500, QColor("#173c66"), "2500"),
     ])
-    legend = shader.legendSettings()  # Pro-style "High : / Low :" labels
+    legend = shader.legendSettings()  # "High : / Low :" labels
     legend.setMaximumLabel("High : 2 500")
     legend.setMinimumLabel("Low : 1")
     shader.setLegendSettings(legend)
@@ -194,7 +194,7 @@ def build_layout(project, map_layers, extent_layer):
 
 
 def build_views(project, themes, extent):
-    """Map themes, and a map view showing each one: Pro-like view tabs.
+    """Map themes, and a map view showing each one: view tabs.
 
     QGIS saves the open map views with the project and reopens them.
     Needs the QGIS window (``iface``); without it only themes are made.

@@ -1,7 +1,7 @@
-"""ArcGIS Pro style ribbon replacing the QGIS menu bar and toolbars.
+"""Ribbon replacing the QGIS menu bar and toolbars.
 
 The ribbon borrows QGIS's own actions (looked up by ``objectName``), so it
-needs no logic of its own; their icons and captions are swapped for Pro ones
+needs no logic of its own; their icons and captions are swapped for skin ones
 through :class:`~.util.Changes`, which also reverts them.
 """
 
@@ -17,7 +17,7 @@ from qgis.PyQt.QtWidgets import (
 
 from .basemaps import gallery_menu
 from .panes import reset_panes, reset_panes_menu
-from .util import pro_icon, tr
+from .util import skin_icon, tr
 
 LARGE, SMALL = 32, 16
 # Core toolbars where plugins put their buttons; shown on the Add-ins tab.
@@ -253,7 +253,7 @@ RIBBON = [
     ]),
 ]
 
-# Blue Project button: (action name or "menu:<QGIS menu>", Pro icon or None
+# Blue Project button: (action name or "menu:<QGIS menu>", skin icon or None
 # for QGIS's own).
 PROJECT_MENU = [
     ("mActionNewProject", "new_project"),
@@ -268,7 +268,7 @@ PROJECT_MENU = [
     ("mActionOptions", "options"),
     ("menu:mSettingsMenu", None),
 ]
-# Quick Access Toolbar, as in Pro's title row.
+# Quick Access Toolbar in the title row.
 QUICK_ACCESS = ["mActionNewProject", "mActionOpenProject",
                 "mActionSaveProject", "mActionUndo", "mActionRedo"]
 
@@ -299,8 +299,8 @@ def _shape_actions(win, kind):
 
 
 def restyle(changes, action, icon, caption=None):
-    """Give a QGIS action a Pro icon (and short caption) until undone."""
-    changes.set(action, "icon", pro_icon(icon))
+    """Give a QGIS action a skin icon (and short caption) until undone."""
+    changes.set(action, "icon", skin_icon(icon))
     if caption:
         changes.set(action, "iconText", caption)
 
@@ -311,13 +311,13 @@ def _button(iface, changes, names, size, icon, caption):
     button = QToolButton(autoRaise=True)
     if names == "gallery:basemaps":
         button.setText(caption)
-        button.setIcon(pro_icon(icon))
+        button.setIcon(skin_icon(icon))
         button.setMenu(gallery_menu(iface, button))
         button.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
     elif names == "panes:reset":
         win = iface.mainWindow()
         button.setText(caption)
-        button.setIcon(pro_icon(icon))
+        button.setIcon(skin_icon(icon))
         button.clicked.connect(lambda: reset_panes(win))
         button.setMenu(reset_panes_menu(win, button))
         button.setPopupMode(QToolButton.ToolButtonPopupMode.MenuButtonPopup)
@@ -335,7 +335,7 @@ def _button(iface, changes, names, size, icon, caption):
             button.setDefaultAction(actions[0])
         elif menu:
             button.setText(caption)
-            button.setIcon(pro_icon(icon))
+            button.setIcon(skin_icon(icon))
         else:
             return None
         if not menu and len(actions) > 1:
@@ -408,7 +408,7 @@ def _tab(groups):
 
 
 def _addin_groups(bars):
-    """One group per plugin toolbar: Pro's Add-ins tab."""
+    """One group per plugin toolbar: the Add-ins tab."""
     groups = []
     for bar in bars:
         name = bar.objectName()
@@ -469,7 +469,7 @@ def _drop_down_results(changes):
 
 
 class TitleRow(QWidget):
-    """Row above the ribbon, like Pro's title bar: Quick Access Toolbar and
+    """Row above the ribbon: Quick Access Toolbar and
     project name on the left, QGIS's locator centred (Command Search),
     messages on the right."""
 
@@ -511,7 +511,7 @@ class TitleRow(QWidget):
         self.show_project()
 
     def show_project(self, *_):
-        """Project title (or file name) as Pro shows the project's name."""
+        """Project title (or file name) as the project's name."""
         project = QgsProject.instance()
         name = project.title() or project.baseName() or tr("Untitled")
         self.project.setText(name)

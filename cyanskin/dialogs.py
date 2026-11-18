@@ -1,10 +1,10 @@
-"""Windows QGIS opens while the skin is on: Pro icons and attribute table.
+"""Windows QGIS opens while the skin is on: skin icons and attribute table.
 
 QGIS hands out icons it cached before the icon theme was active, so every
-window that gets focus has its known QGIS icons swapped for the Pro ones.
-Attribute tables also get Pro's toolbar order with captions ("Field: Add,
+window that gets focus has its known QGIS icons swapped for the skin ones.
+Attribute tables also get a toolbar in groups with captions ("Field: Add,
 Calculate | Selection: Select By Attributes, Zoom To, Switch, Clear, Delete,
-Copy", then the remaining QGIS tools) and Pro's footer; those changes are
+Copy", then the remaining QGIS tools) and a footer; those changes are
 undone for the tables still open when the skin is switched off.
 """
 
@@ -18,13 +18,13 @@ from qgis.PyQt.QtWidgets import (
 )
 
 from .icon_theme import holders_in, swap_icons
-from .util import Changes, pro_icon, separator, tool_button, tr
+from .util import Changes, separator, skin_icon, tool_button, tr
 
 # Widget properties marking what was done: icons swapped in a window,
 # an attribute table dressed.
 ICONS_DONE = "cyanskinIconsSwapped"
 TABLE_DONE = "cyanskinTableDressed"
-# Pro's attribute table toolbar: (label, [(QGIS action, icon, caption)]).
+# Attribute table toolbar: (label, [(QGIS action, icon, caption)]).
 TABLE_TOOLBAR = [
     (tr("Field:"), [
         ("mActionAddAttribute", "add_data", tr("Add")),
@@ -41,13 +41,13 @@ TABLE_TOOLBAR = [
     ]),
 ]
 # QGIS's own footer buttons, replaced by TableFooter. The table / form
-# view switch stays: Pro has no form view, but without the switch a table
+# view switch stays: without it a table
 # shown as a form could not go back.
 QGIS_FOOTER = ("mFilterButton",)
 
 
 class TableFooter(QWidget):
-    """Bottom bar of Pro's attribute table.
+    """Bottom bar of the attribute table.
 
     Left edge: show all / selected records, first / last record, "N of M
     selected". Right edge: filters (map extent, edited, all QGIS filters),
@@ -168,7 +168,7 @@ class TableFooter(QWidget):
 
 
 def dress_attribute_table(dialog, changes):
-    """Pro's toolbar order, captions and footer for an attribute table."""
+    """Toolbar groups, captions and footer for an attribute table."""
     bar = dialog.findChild(QToolBar, "mToolbar")
     if bar is None:
         return
@@ -184,7 +184,7 @@ def dress_attribute_table(dialog, changes):
             action = actions.get(name)
             if action is None:
                 continue
-            changes.set(action, "icon", pro_icon(icon))
+            changes.set(action, "icon", skin_icon(icon))
             changes.set(action, "iconText", caption)
             bar.addAction(action)
             bar.widgetForAction(action).setToolButtonStyle(
@@ -209,7 +209,7 @@ def dress_attribute_table(dialog, changes):
 
 
 def dress_window(window, changes):
-    """Pro icons for a QGIS window and Pro's layout for the attribute
+    """Skin icons for a QGIS window and the skin's layout for the attribute
     tables in it (a window is checked again at every focus, as attribute
     tables may be docked into the main window later)."""
     if window is None or sip.isdeleted(window):

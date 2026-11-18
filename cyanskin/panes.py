@@ -1,9 +1,9 @@
-"""Dock panes arranged and dressed like ArcGIS Pro.
+"""Dock panes arranged and dressed for the skin.
 
-* Contents (Layers): search box, Pro icons on its toolbar,
+* Contents (Layers): search box, skin icons on its toolbar,
 * Catalog (Browser): Project / Favorites / All tabs, permanent search box,
 * Geoprocessing (Processing toolbox): "Find tools", toolbox and tool icons,
-* Symbology (Layer Styling): its Pro title kept, Pro page and undo icons.
+* Symbology (Layer Styling): its title kept, skin page and undo icons.
 
 Dock positions come back with the saved window state; everything else is
 reverted through :class:`~.util.Changes`.
@@ -21,12 +21,12 @@ from qgis.gui import QgsBrowserTreeView
 
 from .contents_views import ContentsViews, LayerMenuIcons, RasterLegend
 from .icon_theme import swap_icons
-from .util import pro_icon, tr
+from .util import skin_icon, tr
 
 LEFT = Qt.DockWidgetArea.LeftDockWidgetArea
 RIGHT = Qt.DockWidgetArea.RightDockWidgetArea
 
-# Dock object name -> (Pro title, area, dock to tabify with).
+# Dock object name -> (title, area, dock to tabify with).
 PANES = {
     "Layers": (tr("Contents"), LEFT, None),
     "Browser": (tr("Catalog"), RIGHT, None),
@@ -48,7 +48,7 @@ CATALOG_TABS = [(tr("Project"), "QgsProjectHomeItem"),
 
 
 class ActivePane(QObject):
-    """Marks the pane holding the focus: Pro draws its title and frame blue
+    """Marks the pane holding the focus: its title and frame are drawn blue
     (style sheet rule ``QDockWidget[cyanskinActive="true"]``)."""
 
     PROPERTY = "cyanskinActive"
@@ -86,12 +86,12 @@ class ActivePane(QObject):
 
 
 class ToolboxDelegate(QStyledItemDelegate):
-    """Toolbox icon for groups, tool icon for algorithms, as in Pro."""
+    """Toolbox icon for groups, tool icon for algorithms."""
 
     def initStyleOption(self, option, index):  # noqa: N802 (Qt API name)
         super().initStyleOption(option, index)
         has_children = index.model().hasChildren(index)
-        option.icon = pro_icon("toolbox" if has_children else "tool")
+        option.icon = skin_icon("toolbox" if has_children else "tool")
 
 
 def _search_row(changes, dock, placeholder, on_text, filters=()):
@@ -102,7 +102,7 @@ def _search_row(changes, dock, placeholder, on_text, filters=()):
     layout.setSpacing(2)
     if filters:
         button = QToolButton(autoRaise=True, toolTip=tr("Filter"))
-        button.setIcon(pro_icon("filter"))
+        button.setIcon(skin_icon("filter"))
         menu = QMenu(button)
         for group in filters:
             menu.addActions(group)
@@ -111,7 +111,7 @@ def _search_row(changes, dock, placeholder, on_text, filters=()):
         button.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
         layout.addWidget(button)
     search = QLineEdit(placeholderText=placeholder, clearButtonEnabled=True)
-    search.addAction(pro_icon("search"),
+    search.addAction(skin_icon("search"),
                      QLineEdit.ActionPosition.LeadingPosition)
     search.textChanged.connect(on_text)
     layout.addWidget(search)
@@ -121,13 +121,13 @@ def _search_row(changes, dock, placeholder, on_text, filters=()):
 
 def _dress_contents(changes, iface, dock):
     """Contents pane: search row with the legend filters, List By views,
-    Pro legend and context menu icons, regular fonts, no toolbar."""
+    compact raster legend and context menu icons, regular fonts, no toolbar."""
     bar = dock.findChild(QToolBar)
     filters = []
     for action, icon in zip(bar.actions() if bar else [], CONTENTS_ICONS):
         widget = bar.widgetForAction(action)
         target = widget if isinstance(widget, QToolButton) else action
-        changes.set(target, "icon", pro_icon(icon))
+        changes.set(target, "icon", skin_icon(icon))
         if icon.startswith("filter") and widget and widget.menu():
             # Legend filters move to the drop-down next to the search box.
             filters.append(widget.menu().actions())
@@ -137,17 +137,17 @@ def _dress_contents(changes, iface, dock):
                 filters)
     layout = dock.widget().layout()
     views = ContentsViews(iface, iface.layerTreeView(), layout)
-    layout.insertWidget(1, views)  # under the search row, as in Pro
+    layout.insertWidget(1, views)  # under the search row
     layout.insertWidget(2, views.header)
     changes.add(views.remove)
     LayerMenuIcons(iface.layerTreeView(), changes)
     RasterLegend(iface.layerTreeView(), changes)
-    # Pro has no toolbar here: these tools are on the ribbon and the
+    # No toolbar here: these tools are on the ribbon and the
     # context menu (the legend filters moved next to the search box).
     if bar:
         changes.set(bar, "visible", False)
     changes.add(lambda: proxy.setFilterText(""))
-    # Pro's Contents: regular-weight names, check boxes on layers only.
+    # Contents: regular-weight names, check boxes on layers only.
     model = iface.layerTreeView().layerTreeModel()
     for kind in (QgsLayerTreeNode.NodeType.NodeLayer,
                  QgsLayerTreeNode.NodeType.NodeGroup):
@@ -164,12 +164,12 @@ def _dress_contents(changes, iface, dock):
 
 
 def _dress_catalog(changes, dock):
-    """Catalog pane: Pro icons, a permanent search box and the Project /
+    """Catalog pane: skin icons, a permanent search box and the Project /
     Favorites / All tabs, each showing a part of the Browser tree."""
     for name, icon in CATALOG_ICONS.items():
         action = dock.findChild(QAction, name)
         if action:
-            changes.set(action, "icon", pro_icon(icon))
+            changes.set(action, "icon", skin_icon(icon))
     show_filter = dock.findChild(QAction, "mActionShowFilter")
     search = dock.findChild(QLineEdit, "mLeFilter")
     if show_filter and search:
@@ -203,12 +203,12 @@ def _dress_catalog(changes, dock):
 
 
 def _dress_symbology(changes, dock):
-    """Pro undo / redo icons (QGIS sets its own resource icons there) and
-    Pro page icons, also for icons QGIS loaded before the icon theme."""
+    """Skin undo / redo icons (QGIS sets its own resource icons there) and
+    skin page icons, also for icons QGIS loaded before the icon theme."""
     for name, icon in (("mUndoButton", "undo"), ("mRedoButton", "redo")):
         button = dock.findChild(QToolButton, name)
         if button:
-            changes.set(button, "icon", pro_icon(icon))
+            changes.set(button, "icon", skin_icon(icon))
     pages = dock.findChild(QListWidget, "mOptionsListWidget")
     if pages is None:
         return
@@ -216,7 +216,7 @@ def _dress_symbology(changes, dock):
     def dress_items():
         items = [pages.item(row) for row in range(pages.count())]
         swap_icons(items)
-        for item in items:  # Pro keeps the colours of the current page
+        for item in items:  # the current page keeps its colours
             icon = item.icon()
             icon.addPixmap(icon.pixmap(pages.iconSize()),
                            QIcon.Mode.Selected)
@@ -232,7 +232,7 @@ def _dress_symbology(changes, dock):
 
 
 def _dress_toolbox(changes, dock):
-    """Geoprocessing pane: toolbox and tool icons, Pro's search prompt."""
+    """Geoprocessing pane: toolbox and tool icons, a "Find Tools" prompt."""
     tree = dock.findChild(QTreeView)
     if tree:
         changes.set(tree, "itemDelegate", ToolboxDelegate(tree))
@@ -257,7 +257,7 @@ RESET_MODES = {
 
 
 def reset_panes(win, mode="mapping", close_others=True):
-    """Dock the panes where Pro has them, like View > Reset Panes."""
+    """Dock the panes in their default places, like View > Reset Panes."""
     docks = {d.objectName(): d for d in win.findChildren(QDockWidget)}
     _, visible, front, extra = RESET_MODES[mode]
     placement = {name: (area, tab_with)
@@ -286,8 +286,8 @@ def reset_panes_menu(win, parent):
 
 
 def arrange_panes(iface, changes, place=True):
-    """Rename and dress the panes like ArcGIS Pro; ``place``: also move
-    them to Pro's places (else they stay where the user left them)."""
+    """Rename and dress the panes; ``place``: also move them to their
+    default places (else they stay where the user left them)."""
     win = iface.mainWindow()
     for name, (title, _, _) in PANES.items():
         dock = win.findChild(QDockWidget, name)

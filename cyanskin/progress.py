@@ -2,7 +2,7 @@
 
 The work runs in the GUI thread, so the box repaints itself directly
 between steps (no event processing: nothing else runs meanwhile). Its look
-comes from the active style sheet: Pro's thin blue bar while the skin is on.
+comes from the active style sheet: a thin blue bar while the skin is on.
 """
 
 from qgis.PyQt.QtCore import Qt

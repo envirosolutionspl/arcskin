@@ -1,4 +1,4 @@
-"""Pro's map scale box under the map."""
+"""The map scale box under the map."""
 
 import unittest
 

@@ -1,4 +1,4 @@
-"""Pro default symbols, colour ramps and label text format."""
+"""Default symbols, colour ramps and label text format."""
 
 import unittest
 
@@ -24,22 +24,22 @@ class DefaultSymbols(unittest.TestCase):
                 self.assertTrue(
                     symbology._is_qgis_default(memory_layer(geometry)))
 
-    def test_a_pro_symbol_is_not_taken_for_the_default(self):
+    def test_the_skin_symbol_is_not_taken_for_the_qgis_default(self):
         layer = memory_layer("Polygon")
-        layer.setRenderer(QgsSingleSymbolRenderer(symbology.pro_symbol(layer)))
+        layer.setRenderer(QgsSingleSymbolRenderer(symbology.default_symbol(layer)))
         self.assertFalse(symbology._is_qgis_default(layer))
 
-    def test_pro_symbol_matches_the_geometry(self):
+    def test_default_symbol_matches_the_geometry(self):
         expected = {"Point": QgsMarkerSymbol, "LineString": QgsLineSymbol,
                     "Polygon": QgsFillSymbol}
         for geometry, kind in expected.items():
             with self.subTest(geometry=geometry):
-                symbol = symbology.pro_symbol(memory_layer(geometry))
+                symbol = symbology.default_symbol(memory_layer(geometry))
                 self.assertIsInstance(symbol, kind)
                 self.assertTrue(symbol.color().isValid())
 
-    def test_polygons_get_pro_outline(self):
-        symbol = symbology.pro_symbol(memory_layer("Polygon"))  # kept alive
+    def test_polygons_get_a_grey_outline(self):
+        symbol = symbology.default_symbol(memory_layer("Polygon"))  # kept alive
         props = symbol.symbolLayer(0).properties()
         self.assertEqual(props["outline_width"], "0.7")
         self.assertEqual(props["outline_width_unit"], "Point")
@@ -48,7 +48,7 @@ class DefaultSymbols(unittest.TestCase):
 class ColorRamps(unittest.TestCase):
 
     def test_ramps_load_with_unique_prefixed_names(self):
-        ramps = list(symbology.pro_ramps())
+        ramps = list(symbology.bundled_ramps())
         names = [name for name, _ in ramps]
         self.assertGreaterEqual(len(ramps), 100)
         self.assertEqual(len(set(names)), len(names), "duplicate names")
@@ -60,8 +60,8 @@ class ColorRamps(unittest.TestCase):
 
 class TextFormat(unittest.TestCase):
 
-    def test_pro_label_font(self):
-        text = symbology.pro_text_format()
+    def test_label_font(self):
+        text = symbology.label_text_format()
         if QgsFontUtils.fontFamilyOnSystem("Tahoma"):
             self.assertEqual(text.font().family(), "Tahoma")
         else:  # Linux: no missing font stored in the project

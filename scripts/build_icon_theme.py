@@ -1,16 +1,16 @@
-"""Generate cyanskin/resources/qgis_theme: every QGIS icon in the Pro style.
+"""Generate cyanskin/resources/qgis_theme: every QGIS icon in the skin style.
 
 Run with QGIS's Python (the icons live in QGIS's compiled Qt resources):
 
     C:\\OSGeo4W\\bin\\python-qgis.bat scripts\\build_icon_theme.py
 
 Each SVG icon of QGIS's default theme is flattened (gradients become solid
-colours), recoloured to the Pro palette and given Pro's light, tinted
+colours), recoloured to the skin palette and given light, tinted
 outlines instead of dark ones (``soften``, also used on the hand-drawn
 icons). Hand-drawn icons are then copied
 on top: ``resources/icons/theme_overrides/*.svg`` under their own (QGIS)
-names, and the ribbon icons from ``resources/icons/pro`` under the QGIS
-names listed in PRO_AS_QGIS. QGIS's icons are GPL-2.0-or-later, like this
+names, and the ribbon icons from ``resources/icons/skin`` under the QGIS
+names listed in SKIN_AS_QGIS. QGIS's icons are GPL-2.0-or-later, like this
 plugin.
 """
 
@@ -24,7 +24,7 @@ ICONS = ROOT / "cyanskin" / "resources" / "icons"
 OUT = ROOT / "cyanskin" / "resources" / "qgis_theme"
 SOURCE = ":/images/themes/default"
 
-# Colour family -> (light, mid, dark) Pro palette tones.
+# Colour family -> (light, mid, dark) skin palette tones.
 FAMILIES = {
     "red": ("#f6c3bf", "#d0352b", "#9a2018"),
     "orange": ("#fbd9b0", "#f0a050", "#c0601a"),
@@ -37,8 +37,8 @@ NAMED = {"black": "#000000", "white": "#ffffff", "red": "#ff0000",
          "green": "#008000", "blue": "#0000ff", "yellow": "#ffff00",
          "gray": "#808080", "grey": "#808080", "orange": "#ffa500"}
 
-# Ribbon icon (resources/icons/pro/<key>.svg) -> QGIS theme icon names.
-PRO_AS_QGIS = {
+# Ribbon icon (resources/icons/skin/<key>.svg) -> QGIS theme icon names.
+SKIN_AS_QGIS = {
     "pan": ["mActionPan.svg"],
     "zoom_in": ["mActionZoomIn.svg"],
     "zoom_out": ["mActionZoomOut.svg"],
@@ -142,8 +142,8 @@ def _rgb(colour):
     return tuple(int(colour[i:i + 2], 16) / 255 for i in (0, 2, 4))
 
 
-def pro_colour(colour):
-    """Map any colour to the nearest tone of the Pro palette."""
+def palette_colour(colour):
+    """Map any colour to the nearest tone of the skin palette."""
     hue, light, sat = colorsys.rgb_to_hls(*_rgb(colour))
     if sat < 0.2 or light > 0.95 or light < 0.06:
         for limit, grey in ((0.93, "#ffffff"), (0.75, "#dfdfdf"),
@@ -189,10 +189,10 @@ def flatten(svg):
 
     svg = re.sub(r"url\(#([^)]+)\)",
                  lambda m: average(m.group(1)) or m.group(0), svg)
-    svg = HEX.sub(lambda m: pro_colour(m.group(0)), svg)
+    svg = HEX.sub(lambda m: palette_colour(m.group(0)), svg)
     return re.sub(r'(fill|stroke)(="|:\s*)(black|white)\b',
                   lambda m: m.group(1) + m.group(2)
-                  + pro_colour(m.group(3)), svg)
+                  + palette_colour(m.group(3)), svg)
 
 
 DARK = "#4a4a4a"
@@ -205,7 +205,7 @@ def _hex(rgb):
 
 
 def _outline(fill):
-    """Pro-like outline for a shape filled with ``fill``: thin and tinted
+    """Light outline for a shape filled with ``fill``: thin and tinted
     (gold on yellow, dark red on red, ...), light grey on white."""
     if fill in (None, "none"):
         return "#6b6b6b", None  # line art: a lighter grey
@@ -220,7 +220,7 @@ def _outline(fill):
 
 
 def soften(svg):
-    """Replace the dark outlines (and dark fills) of an icon by Pro's
+    """Replace the dark outlines (and dark fills) of an icon by the skin's
     lighter, tinted ones."""
     def shape(match):
         name, attrs, close = match.groups()
@@ -264,12 +264,12 @@ def main():
         target.write_text(soften(flatten(text)), encoding="utf-8")
     for svg in (ICONS / "theme_overrides").glob("*.svg"):
         shutil.copy(svg, icons / svg.name)
-    for key, targets in PRO_AS_QGIS.items():
+    for key, targets in SKIN_AS_QGIS.items():
         for name in targets:
             if name not in names:
                 print("not a QGIS icon:", name)
             (icons / name).parent.mkdir(parents=True, exist_ok=True)
-            shutil.copy(ICONS / "pro" / f"{key}.svg", icons / name)
+            shutil.copy(ICONS / "skin" / f"{key}.svg", icons / name)
     (OUT / "style.qss").write_text("/* CyanSkin icon theme */\n")
     (OUT / "variables.qss").write_text("")
     print(f"{len(names)} QGIS icons restyled into {OUT}")

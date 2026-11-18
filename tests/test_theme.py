@@ -15,7 +15,7 @@ DARK = "#4a4a4a"
 
 
 def referenced_icons():
-    """Names of the Pro icons the specifications and the code use."""
+    """Names of the skin icons the specifications and the code use."""
     names = set()
     for _, groups in ribbon.RIBBON:
         for _, items in groups:
@@ -28,7 +28,7 @@ def referenced_icons():
     names.update(icon for _, items in dialogs.TABLE_TOOLBAR
                  for _, icon, _ in items)
     names.update(thumb for _, thumb, _, _ in basemaps.BASEMAPS)
-    names.update(re.findall(r'(?:pro_icon|tool_button)\("([\w]+)"', CODE))
+    names.update(re.findall(r'(?:skin_icon|tool_button)\("([\w]+)"', CODE))
     return names
 
 
@@ -47,20 +47,20 @@ class ObjectNames(unittest.TestCase):
 
 class Icons(unittest.TestCase):
 
-    def test_every_referenced_pro_icon_exists(self):
+    def test_every_referenced_skin_icon_exists(self):
         missing = sorted(name for name in referenced_icons()
                          if not (ICON_DIR / f"{name}.svg").exists())
         self.assertEqual(missing, [])
 
     def test_icons_the_theme_builder_maps_exist_on_both_sides(self):
-        for key, targets in build_icon_theme.PRO_AS_QGIS.items():
+        for key, targets in build_icon_theme.SKIN_AS_QGIS.items():
             self.assertTrue((ICON_DIR / f"{key}.svg").exists(), key)
             for target in targets:
                 self.assertTrue((THEME_DIR / "icons" / target).exists(),
                                 target)
 
     def test_hand_drawn_icons_have_light_outlines(self):
-        for folder in ("pro", "theme_overrides"):
+        for folder in ("skin", "theme_overrides"):
             for path in (ICON_DIR.parent / folder).glob("*.svg"):
                 self.assertNotIn(DARK, path.read_text(encoding="utf-8"),
                                  path.name)
@@ -95,7 +95,7 @@ class StyleSheet(unittest.TestCase):
 
 
 class Soften(unittest.TestCase):
-    """Pro-like outlines the theme builder gives icons."""
+    """Light outlines the theme builder gives icons."""
 
     def test_filled_shapes_get_a_tinted_thin_outline(self):
         svg = build_icon_theme.soften(

@@ -1,14 +1,14 @@
-"""Pro-like default symbology for new vector layers.
+"""Default symbology for new vector layers.
 
 * New layer colors come from a pastel palette, through QGIS's random style
   color scheme.
 * The same palette is the project's default color ramp, used e.g. for
   categorized (unique values) renderers.
-* A layer added with QGIS's default single symbol gets Pro's defaults:
+* A layer added with QGIS's default single symbol gets the skin's defaults:
   polygons with a 0.7 pt grey outline, 1 pt lines, 4 pt circle markers.
-* Selected features are cyan on the map, Pro's default selection color
-  (the attribute table uses the same cyan).
-* New labels use Pro's default text symbol: Tahoma 10 pt, black (QGIS's
+* Selected features are cyan on the map (the attribute table uses the
+  same cyan).
+* New labels use Tahoma 10 pt, black (QGIS's
   font where Tahoma is not installed, as on most Linux systems).
 * About 100 color ramps (resources/color_ramps.json) are added to the QGIS
   style, tagged "CyanSkin", for classifying vector layers and stretching
@@ -40,7 +40,7 @@ SELECTION = QColor(0, 255, 255)
 RANDOM_KEYS = {"color", "line_color"}
 
 
-class ProColorScheme(QgsColorScheme):
+class PastelColorScheme(QgsColorScheme):
     """Pastel palette QGIS picks new layer colors from."""
 
     def schemeName(self):  # noqa: N802 (QGIS API name)
@@ -50,7 +50,7 @@ class ProColorScheme(QgsColorScheme):
         return [(QColor(c), c) for c in PALETTE]
 
     def clone(self):
-        return ProColorScheme()
+        return PastelColorScheme()
 
 
 def _ramp():
@@ -76,8 +76,8 @@ def _is_qgis_default(layer):
     return fingerprint(symbol) == fingerprint(default)
 
 
-def pro_symbol(layer):
-    """Pro default symbol for ``layer``'s geometry, in a palette color."""
+def default_symbol(layer):
+    """Default symbol for ``layer``'s geometry, in a palette color."""
     color = QgsApplication.colorSchemeRegistry().fetchRandomStyleColor()
     rgb = f"{color.red()},{color.green()},{color.blue()},255"
     geometry = layer.geometryType()
@@ -94,7 +94,7 @@ def pro_symbol(layer):
          "outline_width_unit": "Point"})
 
 
-def pro_ramps():
+def bundled_ramps():
     """(name, QGIS color ramp) of each bundled color ramp."""
     for item in json.loads(RAMPS.read_text(encoding="utf-8")):
         if "stops" in item:
@@ -104,7 +104,7 @@ def pro_ramps():
         elif "colors" in item:
             ramp = QgsPresetSchemeColorRamp([QColor(c)
                                              for c in item["colors"]])
-        else:  # Pro: hue 0-360, saturation and value 0-100
+        else:  # hue 0-360, saturation and value 0-100
             h1, h2, s1, s2, v1, v2 = item["random"]
             ramp = QgsLimitedRandomColorRamp(
                 10, h1, min(h2, 359), round(s1 * 2.55), round(s2 * 2.55),
@@ -112,8 +112,8 @@ def pro_ramps():
         yield f"{TAG} {item['name']}", ramp
 
 
-def pro_text_format():
-    """Pro's default label text symbol: Tahoma 10 pt, black."""
+def label_text_format():
+    """Default label text symbol: Tahoma 10 pt, black."""
     text = QgsTextFormat()
     # Linux has no Tahoma: keep QGIS's font rather than store a missing one.
     if QgsFontUtils.fontFamilyOnSystem("Tahoma"):
@@ -134,7 +134,7 @@ def _set_project_defaults(ramp, text):
     project.setDirty(dirty)
 
 
-class ProSymbology:
+class DefaultSymbology:
     """Installs the palette and restyles freshly added default layers."""
 
     def __init__(self, changes, canvas):
@@ -142,12 +142,12 @@ class ProSymbology:
         previous_selection = canvas.selectionColor()
         canvas.setSelectionColor(SELECTION)
         registry = QgsApplication.colorSchemeRegistry()
-        scheme = ProColorScheme()
+        scheme = PastelColorScheme()
         registry.addColorScheme(scheme)
         previous = registry.randomStyleColorScheme()
         registry.setRandomStyleColorScheme(scheme)
         style = QgsStyle.defaultStyle()
-        ramps = [(RAMP_NAME, _ramp()), *pro_ramps()]
+        ramps = [(RAMP_NAME, _ramp()), *bundled_ramps()]
         # Ramps from the previous QGIS session are still in the style (they
         # are not removed at quit): adding them again would take seconds.
         entity = QgsStyle.StyleEntity.ColorrampEntity
@@ -192,20 +192,20 @@ class ProSymbology:
         changes.add(undo)
 
     def set_selection_color(self, *_):
-        """Pro's cyan selection, also for a project just read."""
+        """Cyan selection, also for a project just read."""
         # QGIS applies the project's own selection color after reading it.
         QTimer.singleShot(0, lambda: self.canvas.setSelectionColor(SELECTION))
 
     @staticmethod
     def set_project_style(*_):
-        """Pro's palette and label font as the project's defaults."""
-        _set_project_defaults(_ramp(), pro_text_format())
+        """The pastel palette and label font as the project's defaults."""
+        _set_project_defaults(_ramp(), label_text_format())
 
     @staticmethod
     def restyle(layers):
-        """Give layers added with QGIS's default symbol Pro's default."""
+        """Give layers added with QGIS's default symbol the skin's default."""
         for layer in layers:
             if isinstance(layer, QgsVectorLayer) and layer.isSpatial() \
                     and _is_qgis_default(layer):
-                layer.setRenderer(QgsSingleSymbolRenderer(pro_symbol(layer)))
+                layer.setRenderer(QgsSingleSymbolRenderer(default_symbol(layer)))
                 layer.triggerRepaint()

@@ -1,9 +1,8 @@
-"""Pro-style frame around the map: view tabs above, a status strip below.
+"""Frame around the map: view tabs above, a status strip below.
 
 * :class:`ViewTabs` lists the main map, extra 2D/3D map views and open
   print layouts; a 2D view's tab shows it in place of the main map.
-* :class:`MapFooter` replaces the QGIS status bar with the layout of Pro's
-  map view status bar.
+* :class:`MapFooter` replaces the QGIS status bar with a map status strip.
 * :class:`MapAttribution` shows the credits of the layers drawn (basemap
   copyrights) along the bottom of the map.
 """
@@ -25,7 +24,7 @@ from qgis.PyQt.QtWidgets import (
 )
 
 from . import coords
-from .util import pro_icon, separator, tool_button, tr
+from .util import separator, skin_icon, tool_button, tr
 
 UNIT_KEY = "cyanskin/coordinate_format"
 # The project's own layer check states while Contents shows another map
@@ -34,7 +33,7 @@ MAIN_STATE = "main"
 
 
 class ViewTabs(QTabBar):
-    """Tabs above the map for every map view and open layout, like Pro's.
+    """Tabs above the map for every map view and open layout.
 
     Extra 2D map views are hidden while the skin is on; their tab shows
     them in the main map instead (their map theme, also in Contents; each
@@ -101,7 +100,7 @@ class ViewTabs(QTabBar):
         while self.count():
             self.removeTab(0)
         for index, (title, icon, window) in enumerate(views):
-            self.addTab(pro_icon(icon), title)
+            self.addTab(skin_icon(icon), title)
             if window is not None:
                 close = QToolButton(autoRaise=True, toolTip=tr("Close"))
                 close.setIconSize(QSize(10, 10))
@@ -117,9 +116,9 @@ class ViewTabs(QTabBar):
         for index in range(self.count()):
             button = self.tabButton(index, QTabBar.ButtonPosition.RightSide)
             if button:
-                button.setIcon(pro_icon("tab_close_white"
-                                        if index == self.currentIndex()
-                                        else "tab_close"))
+                button.setIcon(skin_icon("tab_close_white"
+                                         if index == self.currentIndex()
+                                         else "tab_close"))
 
     def _activate(self, index):
         if not 0 <= index < len(self.views):
@@ -137,7 +136,7 @@ class ViewTabs(QTabBar):
     def show_map(self, dock):
         """Show map view ``dock`` (None: the main map) in the main map.
 
-        Like Pro, Contents then shows that map: the view's map theme is
+        Contents then shows that map: the view's map theme is
         applied to the layer tree, and check box changes update it. The
         project's own check states are kept aside meanwhile.
         """
@@ -281,7 +280,7 @@ def _checks(group, path=""):
 
 
 class ScaleBox(QComboBox):
-    """Editable map scale, written in full like Pro: "1:24 000"."""
+    """Editable map scale, written in full: "1:24 000"."""
 
     SCALES = [1000, 2500, 5000, 10000, 25000, 50000, 100000, 250000,
               500000, 1000000, 2500000, 5000000, 10000000, 25000000,
@@ -327,7 +326,7 @@ class ScaleBox(QComboBox):
 
 
 class ReferenceGrid(QgsMapCanvasItem):
-    """Light reference grid over the map, Pro's tray "Grid" toggle."""
+    """Light reference grid over the map, the footer's "Grid" toggle."""
 
     def __init__(self, canvas):
         super().__init__(canvas)
@@ -376,7 +375,7 @@ def _mirror(button, action):
 
 
 class MapFooter(QWidget):
-    """Status strip under the map, laid out like Pro's map view status bar.
+    """Status strip under the map.
 
     Left: scale | tray toggles (snapping, grid, constraints) | coordinates
     you can type in, with a display-unit menu, and the coordinate system.
@@ -412,7 +411,7 @@ class MapFooter(QWidget):
         units.setArrowType(Qt.ArrowType.NoArrow)
         units.setMenu(self._unit_menu(units))
         self.crs = QToolButton(autoRaise=True)
-        self.crs.setIcon(pro_icon("coordinates"))
+        self.crs.setIcon(skin_icon("coordinates"))
         self.crs.setToolButtonStyle(
             Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
         self.crs.clicked.connect(self._crs_dialog)
@@ -568,13 +567,13 @@ class MapFooter(QWidget):
                 and layer.selectedFeatureCount()]
 
     def zoom_to_selection(self):
-        """Zoom to the selection of all layers, like Pro (not just one)."""
+        """Zoom to the selection of all layers (not just one)."""
         layers = self._selected_layers()
         if layers:
             self.canvas.zoomToSelected(layers)
 
     def count_selection(self, *_):
-        """Selected features in all layers, as Pro counts them."""
+        """Selected features in all layers."""
         count = sum(layer.selectedFeatureCount()
                     for layer in QgsProject.instance().mapLayers().values()
                     if isinstance(layer, QgsVectorLayer))
@@ -583,7 +582,7 @@ class MapFooter(QWidget):
 
 
 class MapAttribution(QWidget):
-    """Credits strip along the bottom of the map, like Pro's attribution.
+    """Credits strip along the bottom of the map.
 
     The usage rights (layer metadata) of the layers drawn, elided to one
     line, all of it in the tooltip. Hidden when nothing drawn has credits.

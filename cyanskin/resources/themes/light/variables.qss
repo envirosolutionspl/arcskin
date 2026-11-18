@@ -1,4 +1,4 @@
-/* Colours of a light, ArcGIS Pro-like theme */
+/* Colours of the light theme */
 @bg-window: #f7f8f8;
 @bg-panel: #ffffff;
 @bg-header: #ebebeb;

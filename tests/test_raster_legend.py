@@ -1,4 +1,4 @@
-"""Pro's "High : max" / "Low : min" labels on raster ramp legends."""
+"""The "High : max" / "Low : min" labels on raster ramp legends."""
 
 import struct
 import tempfile

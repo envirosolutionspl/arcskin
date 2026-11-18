@@ -1,4 +1,4 @@
-"""CyanSkin - QGIS plugin giving QGIS an interface inspired by ArcGIS Pro."""
+"""CyanSkin - QGIS plugin giving QGIS a ribbon interface."""
 
 from pathlib import Path
 
