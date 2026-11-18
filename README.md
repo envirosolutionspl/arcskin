@@ -97,10 +97,10 @@ last record, "N of M selected", filters, zoom slider, refresh).
   lines, 4 pt circle markers.
 - New labels use Tahoma 10 pt, black (QGIS's font where Tahoma is not
   installed).
-- About 100 colour ramps (sequential, diverging, thematic such as relief, depth,
-  slope, aspect and rainfall, spectral and qualitative) are added to the QGIS
-  style with the tag *CyanSkin*, for classifying vectors and stretching rasters.
-  Ramps of an earlier version are replaced.
+- 14 colour ramps are added to the QGIS style with the tag *CyanSkin*, for
+  classifying vectors and stretching rasters: terrain, terrain (land only),
+  depth, temperature, precipitation, slope and aspect, five single-hue
+  sequential ramps and two diverging ones.
 
 ![Symbology pane](docs/images/symbology.png)
 
@@ -122,8 +122,7 @@ last record, "N of M selected", filters, zoom slider, refresh).
 ## Installation
 
 From the QGIS plugin repository: *Plugins → Manage and Install Plugins… → All*,
-search for **CyanSkin**, click *Install Plugin*. CyanSkin is marked experimental:
-tick *Show also experimental plugins* under *Settings* in the same dialog first.
+search for **CyanSkin**, click *Install Plugin*.
 
 Or from a ZIP file:
 
@@ -137,6 +136,10 @@ the plugin: QGIS cannot load it ("No module named 'cyanskin-main/cyanskin'").
 
 The CyanSkin look is applied as soon as the plugin is installed. Switching takes a
 few seconds; a progress box shows the work.
+
+CyanSkin continues the plugin previously published as ArcSkin. If ArcSkin is
+installed, uninstall it and restart QGIS: CyanSkin then takes over its settings
+and removes the colour ramps and icon theme it added.
 
 ## Turning the look on and off
 
@@ -188,12 +191,14 @@ cyanskin/                      the plugin (packed into the ZIP)
   symbology.py                default symbols, label font, colour ramps
   icon_theme.py               QGIS icon theme
   basemaps.py                 basemap gallery
+  legacy.py                   settings and leftovers of the earlier name
   resources/                  icons, style sheets, generated icon theme, colour ramps
   i18n/                       translations (.ts sources)
 scripts/
   package.py                  builds dist/cyanskin-<version>.zip
   i18n.py                     update .ts files from the code, compile .qm files
   build_icon_theme.py         generates the QGIS icon theme (run with python-qgis)
+  build_color_ramps.py        generates the bundled colour ramps
   build_demo.py               builds the demo project (QGIS Python console)
 demo/                         demo project and data
 docs/images/                  screenshots
