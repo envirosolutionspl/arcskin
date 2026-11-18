@@ -7,6 +7,9 @@
 [![Release](https://img.shields.io/github/v/release/envirosolutionspl/arcskin)](https://github.com/envirosolutionspl/arcskin/releases/latest)
 [![plugins.qgis.org](https://img.shields.io/badge/plugins.qgis.org-arcskin-589632?logo=qgis&logoColor=white)](https://plugins.qgis.org/plugins/arcskin/)
 
+> ArcSkin is continued as **CyanSkin**: install CyanSkin from the QGIS plugin
+> repository. Version 0.7.0 is the last version of ArcSkin.
+
 **ArcSkin gives QGIS a ribbon interface**: a ribbon built from QGIS's own tools,
 reorganised panes, view tabs above the map, a map status bar, light flat icons for
 the whole of QGIS, default symbology and colour ramps. Everything is switched on
