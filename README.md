@@ -97,10 +97,11 @@ last record, "N of M selected", filters, zoom slider, refresh).
   lines, 4 pt circle markers.
 - New labels use Tahoma 10 pt, black (QGIS's font where Tahoma is not
   installed).
-- About 100 colour ramps (sequential, diverging, thematic such as relief, depth,
-  slope, aspect and rainfall, spectral and qualitative) are added to the QGIS
-  style with the tag *ArcSkin*, for classifying vectors and stretching rasters.
-  Ramps of an earlier version are replaced.
+- 14 colour ramps are added to the QGIS style with the tag *ArcSkin*, for
+  classifying vectors and stretching rasters: terrain, terrain (land only),
+  depth, temperature, precipitation, slope and aspect, five single-hue
+  sequential ramps and two diverging ones. Ramps of an earlier version are
+  replaced.
 
 ![Symbology pane](docs/images/symbology.png)
 

@@ -1,5 +1,6 @@
 """Pro default symbols, colour ramps and label text format."""
 
+import json
 import unittest
 
 from qgis.core import (
@@ -7,6 +8,7 @@ from qgis.core import (
     QgsSingleSymbolRenderer, QgsTextFormat, QgsVectorLayer,
 )
 
+import build_color_ramps
 from arcskin import symbology
 
 
@@ -50,12 +52,18 @@ class ColorRamps(unittest.TestCase):
     def test_ramps_load_with_unique_prefixed_names(self):
         ramps = list(symbology.pro_ramps())
         names = [name for name, _ in ramps]
-        self.assertGreaterEqual(len(ramps), 100)
+        self.assertEqual(len(ramps), len(build_color_ramps.RAMPS))
         self.assertEqual(len(set(names)), len(names), "duplicate names")
         for name, ramp in ramps:
             self.assertTrue(name.startswith(f"{symbology.TAG} "), name)
             self.assertTrue(ramp.color(0.0).isValid(), name)
             self.assertTrue(ramp.color(1.0).isValid(), name)
+
+    def test_bundled_file_is_what_the_script_builds(self):
+        bundled = json.loads(symbology.RAMPS.read_text(encoding="utf-8"))
+        self.assertEqual(
+            [(r["name"], r["group"], r["stops"]) for r in bundled],
+            [(n, g, s) for n, g, s in build_color_ramps.RAMPS])
 
 
 class TextFormat(unittest.TestCase):
