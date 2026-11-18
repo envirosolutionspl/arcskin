@@ -10,9 +10,9 @@
   same cyan).
 * New labels use Tahoma 10 pt, black (QGIS's
   font where Tahoma is not installed, as on most Linux systems).
-* About 100 color ramps (resources/color_ramps.json) are added to the QGIS
-  style, tagged "CyanSkin", for classifying vector layers and stretching
-  rasters.
+* The color ramps of resources/color_ramps.json (built by
+  scripts/build_color_ramps.py) are added to the QGIS style, tagged
+  "CyanSkin", for classifying vector layers and stretching rasters.
 """
 
 import json
