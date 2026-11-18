@@ -356,6 +356,10 @@
       <translation>Wygląd ArcSkin</translation>
     </message>
     <message>
+      <source>ArcSkin is now CyanSkin. Install CyanSkin from the plugin manager; this plugin will not be updated any more.</source>
+      <translation>ArcSkin to teraz CyanSkin. Zainstaluj CyanSkin w menedżerze wtyczek; ta wtyczka nie będzie już aktualizowana.</translation>
+    </message>
+    <message>
       <source>Applying the ArcSkin look…</source>
       <translation>Stosowanie wyglądu ArcSkin…</translation>
     </message>

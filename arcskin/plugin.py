@@ -9,7 +9,7 @@ A theme is a directory under ``resources/themes/<name>/`` with two files:
 import re
 from pathlib import Path
 
-from qgis.core import QgsSettings
+from qgis.core import Qgis, QgsSettings
 from qgis.PyQt.QtCore import QByteArray, QCoreApplication
 from qgis.PyQt.QtGui import QAction, QIcon
 from qgis.PyQt.QtWidgets import QToolBar
@@ -34,6 +34,8 @@ STATE_KEY = "arcskin/original_window_state"
 # The user's own on/off choice. Written only on a click, so unloading for
 # an update, the plugin manager or QGIS quitting never change it.
 ENABLED_KEY = "arcskin/enabled"
+# Set once the user has been told that the plugin goes on as CyanSkin.
+NOTICE_KEY = "arcskin/renamed_notice"
 
 
 def load_qss(theme: str) -> str:
@@ -71,6 +73,10 @@ class ArcSkinPlugin:
         self.action.triggered.connect(
             lambda on: QgsSettings().setValue(ENABLED_KEY, on))
         self.iface.addPluginToMenu(MENU_NAME, self.action)
+        if self.iface.mainWindow().isVisible():
+            self.renamed_notice()
+        else:
+            self.iface.initializationCompleted.connect(self.renamed_notice)
         # The skin goes on when loaded, unless the user switched it off.
         # At QGIS start-up wait until all plugins are loaded so their
         # toolbars reach the ribbon's Add-ins tab.
@@ -82,6 +88,18 @@ class ArcSkinPlugin:
             self.iface.initializationCompleted.connect(
                 lambda: self.action.setChecked(True)
             )
+
+    def renamed_notice(self):
+        """Say once that the plugin goes on as CyanSkin."""
+        settings = QgsSettings()
+        if settings.value(NOTICE_KEY, False, type=bool):
+            return
+        settings.setValue(NOTICE_KEY, True)
+        self.iface.messageBar().pushMessage(
+            "ArcSkin", tr("ArcSkin is now CyanSkin. Install CyanSkin from the "
+                          "plugin manager; this plugin will not be updated "
+                          "any more."),
+            Qgis.MessageLevel.Info, 0)
 
     def unload(self):
         # QGIS also unloads plugins when it quits; it freezes the map canvas
