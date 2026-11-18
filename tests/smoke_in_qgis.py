@@ -17,6 +17,7 @@ from qgis.PyQt.QtWidgets import (
     QApplication, QTabBar, QToolBar, QToolButton, QWidget,
 )
 
+from cyanskin import symbology
 from cyanskin.ribbon import ADDIN_HOSTS
 
 # QGIS toolbars and tools the ribbon does not offer (yet).
@@ -139,7 +140,8 @@ def smoke_test(iface):
            "footer under the map")
     expect(not win.statusBar().isVisible(), "status bar hidden")
     expect(skinned(), "CyanSkin style sheet applied")
-    expect(len(ramps()) >= 100, "CyanSkin colour ramps in the style")
+    expect(len(ramps()) > len(list(symbology.bundled_ramps())),
+           "CyanSkin colour ramps and palette in the style")
     expect(QgsSettings().value("UI/UITheme") == "CyanSkin", "UI theme set")
     missing = missing_from_ribbon(win)
     expect(not missing, f"QGIS tools the ribbon lacks: {missing}")
